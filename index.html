@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GENOVEX | Professional Web3 Explorer & Terminal</title>
+    <title>GENOVEX | Professional Web3 Terminal</title>
     
     <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,9 +16,12 @@
         :root {
             --primary: #f97316;
             --primary-dark: #ea580c;
-            --bg: #050508;
-            --card: rgba(15, 15, 25, 0.85);
+            --bg: #030305;
+            --card: rgba(10, 10, 18, 0.85);
             --border: rgba(249, 115, 22, 0.2);
+            --neon-green: #22c55e;
+            --neon-red: #ef4444;
+            --neon-blue: #3b82f6;
         }
 
         * {
@@ -35,7 +38,7 @@
             min-height: 100vh;
         }
 
-        /* Osiris Particle Engine Background */
+        /* Osiris particle engine canvas background */
         #osiris-bg {
             position: fixed;
             top: 0;
@@ -43,21 +46,21 @@
             z-index: -1;
             width: 100%;
             height: 100%;
+            opacity: 0.6;
         }
 
         .glass {
             background: var(--card);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .glass:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 30px rgba(249, 115, 22, 0.15);
-        }
+        /* Flashing glow indicators for rapid price movements */
+        .glow-green { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); border-color: var(--neon-green) !important; }
+        .glow-red { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); border-color: var(--neon-red) !important; }
+        .glow-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); border-color: var(--neon-blue) !important; }
 
         .nav-link {
             transition: all 0.3s ease;
@@ -76,7 +79,7 @@
             font-weight: 800;
             padding: 10px 24px;
             border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -85,12 +88,12 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(249, 115, 22, 0.5);
+            box-shadow: 0 0 25px rgba(249, 115, 22, 0.6);
         }
 
         section {
             display: none;
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: slideUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
         section.active {
@@ -104,231 +107,244 @@
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #050508; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-        .brand-text {
-            background: linear-gradient(to right, #ffffff, #f97316);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            letter-spacing: -1px;
+        /* Ticker dynamic transitions */
+        .color-pulse {
+            transition: color 0.1s ease, text-shadow 0.1s ease;
         }
 
-        /* Loading Spinner */
-        .spinner {
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border-left-color: var(--primary);
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Interactive custom overlays */
+        .hype-grid {
+            background-image: linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
     </style>
 </head>
-<body>
+<body class="hype-grid">
 
-    <!-- Three.js Ambient Particle Space -->
+    <!-- Background Particles -->
     <canvas id="osiris-bg"></canvas>
 
-    <nav class="fixed top-0 w-full z-50 px-6 py-6">
-        <div class="max-w-7xl mx-auto glass px-8 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-4 cursor-pointer" onclick="showSection('home')">
-                <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center shadow-lg shadow-orange-500/20">
-                    <i class="fa-solid fa-bolt-lightning text-black text-xl"></i>
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto glass px-6 py-4 flex justify-between items-center border-orange-500/10">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('home')">
+                <div class="w-8 h-8 bg-orange-500 rounded flex items-center justify-center shadow-lg shadow-orange-500/30">
+                    <i class="fa-solid fa-bolt-lightning text-black text-sm"></i>
                 </div>
-                <span class="text-3xl brand-text select-none">GENOVEX</span>
+                <span class="text-2xl font-extrabold tracking-tighter uppercase text-white">GENOVEX</span>
             </div>
             
             <div class="hidden md:flex gap-10 font-bold text-xs uppercase tracking-widest">
                 <a onclick="showSection('home')" class="nav-link active" id="btn-home">Home</a>
-                <a onclick="showSection('dashboard')" class="nav-link" id="btn-dashboard">Dashboard</a>
+                <a onclick="showSection('dashboard')" class="nav-link" id="btn-dashboard">Terminal</a>
                 <a onclick="showSection('explorer')" class="nav-link" id="btn-explorer">Osiris Map</a>
             </div>
 
-            <div class="flex gap-4 items-center">
-                <button onclick="handleWalletAction()" id="wallet-status" class="btn-primary text-[10px] tracking-tighter">
-                    <i class="fa-solid fa-wallet"></i> CONNECT PHANTOM
+            <div class="flex items-center gap-4">
+                <div class="hidden lg:flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1 rounded-full">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <span class="text-[9px] font-bold text-red-500" id="live-viewers">LIVE: 14,842 STREAMERS</span>
+                </div>
+                <button onclick="connectWallet()" id="wallet-status" class="btn-primary text-[10px] tracking-tighter">
+                    <i class="fa-solid fa-wallet"></i> CONNECT WALLET
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- MAIN APP VIEWPORTS -->
-    <main class="pt-32 pb-20 px-6 max-w-7xl mx-auto relative z-10">
+    <!-- MAIN INTERACTIVE WRAPPER -->
+    <main class="pt-28 pb-20 px-4 max-w-7xl mx-auto relative z-10">
 
+        <!-- SECTION: HOME -->
         <section id="home" class="active">
-            <div class="grid lg:grid-cols-2 gap-16 items-center min-h-[60vh]">
+            <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[65vh]">
                 <div>
                     <div class="inline-block px-4 py-1 border border-orange-500/30 rounded-full mb-6 bg-orange-500/10">
-                        <p class="text-orange-500 text-[10px] font-bold tracking-widest uppercase">NovaChain Web3 Telemetry</p>
+                        <p class="text-orange-500 text-[9px] font-bold tracking-widest uppercase">NovaChain cockpit initialized</p>
                     </div>
-                    <h1 class="text-6xl md:text-8xl font-extrabold leading-[0.9] mb-8">
-                        NAVIGATE THE <br><span class="text-orange-500">DIGITAL PULSE</span>
+                    <h1 class="text-6xl md:text-8xl font-black leading-[0.95] mb-6">
+                        THE NOMAD <br><span class="text-orange-500">TURBO PULSE</span>
                     </h1>
-                    <p class="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
-                        GENOVEX brings real-time, high-fidelity analytics to your screen. Monitor live validator nodes, verify crypto balances natively, and secure assets with Phantom.
+                    <p class="text-gray-400 text-lg mb-8 max-w-lg leading-relaxed">
+                        GENOVEX is designed to capture pure visual momentum. Enter the Terminal to witness rapid asset decoupling in real time.
                     </p>
                     
-                    <div class="flex flex-wrap gap-6 mb-12">
-                        <button onclick="showSection('dashboard')" class="btn-primary px-10 py-5">
-                            ENTER TERMINAL <i class="fa-solid fa-arrow-right"></i>
+                    <div class="flex flex-wrap gap-4 mb-8">
+                        <button onclick="showSection('dashboard')" class="btn-primary px-8 py-4 text-xs">
+                            ENTER LIVE TERMINAL <i class="fa-solid fa-bolt ml-2"></i>
                         </button>
-                        <a href="https://t.me/GENOVEXCOIN" target="_blank" class="glass px-10 py-5 font-bold flex items-center gap-3 hover:bg-white/5">
-                            <i class="fa-brands fa-telegram text-xl"></i> COMMUNITY
+                        <a href="https://t.me/GENOVEXCOIN" target="_blank" class="glass px-8 py-4 text-xs font-bold flex items-center gap-2 hover:bg-white/5">
+                            <i class="fa-brands fa-telegram text-lg text-orange-500"></i> TELEGRAM
                         </a>
                     </div>
 
-                    <div class="glass p-6 border-orange-500/20">
-                        <div class="flex items-center justify-between mb-4">
-                            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Live Verified Token</p>
-                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        </div>
-                        <a href="https://pump.fun/coin/EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump" target="_blank" class="mono text-orange-500 text-sm break-all font-bold hover:underline">
-                            https://pump.fun/coin/EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump
+                    <div class="glass p-4 border-orange-500/20 inline-block w-full max-w-lg">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">Contract Address (Pump.fun)</p>
+                        <a href="https://pump.fun/coin/EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump" target="_blank" class="mono text-orange-500 text-xs break-all font-bold hover:underline block">
+                            EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump
                         </a>
                     </div>
                 </div>
 
-                <div class="relative hidden lg:block">
-                    <div class="absolute -inset-20 bg-orange-500/10 rounded-full blur-[120px]"></div>
-                    <div class="glass aspect-square flex items-center justify-center p-12 relative overflow-hidden">
+                <div class="relative flex justify-center">
+                    <div class="w-full max-w-[450px] aspect-square glass flex items-center justify-center p-12 relative overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-tr from-orange-500/10 to-transparent"></div>
-                        <i class="fa-solid fa-cube text-[250px] text-orange-500/20"></i>
-                        <div class="absolute flex flex-col items-center">
-                            <div class="text-center">
-                                <h3 class="text-5xl font-black mb-2 tracking-tighter">NVC</h3>
-                                <p class="mono text-orange-500 text-xs animate-pulse tracking-widest">OSIRIS CORE INTEGRATION</p>
-                            </div>
+                        <i class="fa-solid fa-cubes text-[200px] text-orange-500/15 orbit-icon"></i>
+                        <div class="absolute text-center">
+                            <h3 class="text-4xl font-extrabold mb-1">GNX</h3>
+                            <p class="mono text-orange-500 text-[10px] animate-pulse tracking-[0.3em]">HYPE ENGINE ONLINE</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="dashboard">
-            <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-10">
-                <div>
-                    <h2 class="text-4xl font-extrabold mb-2 uppercase tracking-tighter">Market <span class="text-orange-500">Analytics</span></h2>
-                    <p class="text-gray-500 mono text-xs">Verify: EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump</p>
-                </div>
-                <div class="flex gap-4">
-                    <div class="glass px-6 py-3 text-center">
-                        <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">NVC Price</p>
-                        <p class="text-xl font-bold text-orange-500">$1.42</p>
-                    </div>
-                    <div class="glass px-6 py-3 text-center">
-                        <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">24h Vol</p>
-                        <p class="text-xl font-bold">$642.8K</p>
-                    </div>
-                </div>
+        <!-- SECTION: DASHBOARD (COCKPIT TERMINAL) -->
+        <section id="dashboard" class="relative">
+            <!-- FLOATING POPUP ENGINE BADGES (Addictive Psychological Prompts) -->
+            <div class="absolute inset-x-0 top-1/3 -translate-y-1/2 flex flex-col items-center gap-3 z-30 pointer-events-none overflow-hidden h-[120px]" id="fomo-alerts-container">
+                <!-- Floating tags will trigger and slide up here dynamically -->
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8">
-                <!-- Trading Chart -->
-                <div class="lg:col-span-2 glass p-8 h-[500px] flex flex-col">
-                    <div class="flex justify-between items-center mb-8">
-                        <h3 class="font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-chart-area text-orange-500"></i> NVC / SOL PRICE PERFORMANCE
-                        </h3>
-                        <div class="flex gap-2">
-                            <span class="px-3 py-1 bg-orange-500 text-black rounded text-[10px] font-bold">LIVE TELEMETRY</span>
+            <div class="grid lg:grid-cols-4 gap-6">
+                
+                <!-- COLUMN 1: OSIRIS SENTINEL (Left: Feed / Ledger / Telemetry) -->
+                <div class="lg:col-span-1 space-y-4">
+                    <div class="glass p-4 flex flex-col h-[280px]">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-[10px] font-bold uppercase tracking-wider text-orange-500">Live Cockpit Chat</h3>
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
+                        </div>
+                        <div class="flex-grow overflow-y-auto space-y-3 pr-1 text-xs select-none" id="cockpit-chat">
+                            <!-- Live feed comments generated on-the-fly -->
                         </div>
                     </div>
-                    <div class="flex-grow relative">
-                        <canvas id="nvc-chart"></canvas>
+
+                    <div class="glass p-4 h-[254px] flex flex-col">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-[10px] font-bold uppercase tracking-wider text-orange-500">Telemetry Feed</h3>
+                            <span class="text-[9px] text-gray-500">OSIRIS ACTIVE</span>
+                        </div>
+                        <div class="space-y-2 flex-grow overflow-y-auto" id="transaction-feed">
+                            <!-- Auto-generated crazy transactions -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Web3 Wallet Panel -->
-                <div class="space-y-8">
-                    <div class="glass p-8 border-orange-500/40 bg-gradient-to-b from-orange-500/5 to-transparent">
-                        <h3 class="text-sm font-bold mb-6 uppercase tracking-widest text-gray-400">Assets Portfolio</h3>
-                        <div class="space-y-6">
+                <!-- QUADRANTS AREA (Right side: Token / Tesla / BTC / SpaceX) -->
+                <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- QUADRANT 1: GNX MY TOKEN (Top Right) -->
+                    <div class="glass p-6 min-h-[260px] flex flex-col justify-between border-orange-500/40 relative overflow-hidden" id="quad-gnx">
+                        <div class="absolute top-2 right-2 flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded">
+                            <i class="fa-solid fa-fire text-orange-500 text-[10px]"></i>
+                            <span class="text-[9px] font-bold text-orange-500 uppercase">Hype Core</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-orange-500 text-black text-[9px] font-black px-2 py-0.5 rounded">GNX</span>
+                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Token Live Value</h3>
+                            </div>
+                            <h2 class="text-4xl md:text-5xl font-black tracking-tighter mono color-pulse" id="price-gnx">$0.00000229</h2>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
                             <div>
-                                <p class="text-[10px] text-gray-500 font-bold mb-1">WALLET ADDRESS</p>
-                                <p class="mono text-xs font-bold text-orange-500 break-all" id="disp-address">Not Connected</p>
+                                <p class="text-[9px] text-gray-500 font-bold uppercase mb-0.5">Live Velocity</p>
+                                <span class="text-green-400 font-bold text-xs" id="gnx-speed">+24.8% pump</span>
                             </div>
-                            <div class="pt-4 border-t border-white/5">
-                                <p class="text-[10px] text-gray-500 font-bold mb-1">LIVE BALANCE (PHANTOM)</p>
-                                <div class="flex justify-between items-end">
-                                    <h4 class="text-3xl font-extrabold" id="bal-sol">0.00</h4>
-                                    <p class="text-orange-500 font-bold text-sm">SOL</p>
-                                </div>
-                            </div>
-                            <div class="pt-4 border-t border-white/5">
-                                <p class="text-[10px] text-gray-500 font-bold mb-1">ESTIMATED STAKED NVC</p>
-                                <div class="flex justify-between items-end">
-                                    <h4 class="text-3xl font-extrabold" id="bal-nvc">0.00</h4>
-                                    <p class="text-orange-500 font-bold text-sm">NVC</p>
-                                </div>
-                            </div>
-                            <div class="pt-4 border-t border-white/5">
-                                <p class="text-[10px] text-gray-500 font-bold mb-1">COMBINED USD VALUE</p>
-                                <h4 class="text-2xl font-bold text-gray-300" id="bal-usd">$0.00 USD</h4>
-                            </div>
+                            <button onclick="boostMultiplier()" class="bg-orange-500 hover:bg-orange-400 text-black font-black px-4 py-2 rounded text-[10px] tracking-widest uppercase">
+                                BOOST MULTIPLIER 🚀
+                            </button>
                         </div>
-                        <button onclick="handleWalletAction()" id="action-wallet-btn" class="w-full mt-8 btn-primary justify-center py-4">
-                            CONNECT PHANTOM WALLET
-                        </button>
                     </div>
 
-                    <div class="glass p-8">
-                        <h3 class="text-sm font-bold mb-6 uppercase tracking-widest text-gray-400">Recent Terminal Blocks</h3>
-                        <div class="space-y-4" id="block-list">
-                            <!-- Injected by JS -->
+                    <!-- QUADRANT 2: PERFORMANCE PLOT (Top Mid-Right) -->
+                    <div class="glass p-6 min-h-[260px] flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">NVC Performance Wave</h3>
+                            <span class="text-[9px] text-green-500 font-bold">120 Hz</span>
+                        </div>
+                        <div class="h-[140px] relative">
+                            <canvas id="mini-performance-chart"></canvas>
+                        </div>
+                        <div class="flex justify-between text-[9px] text-gray-500 uppercase font-bold">
+                            <span>0x82...pump</span>
+                            <span>Stable Orbit</span>
                         </div>
                     </div>
+
+                    <!-- QUADRANT 3: TESLA CRASHED (Bottom Left) -->
+                    <div class="glass p-6 min-h-[260px] flex flex-col justify-between border-red-500/20" id="quad-tesla">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-red-500/10 text-red-500 text-[9px] font-black px-2 py-0.5 rounded border border-red-500/20">TSLA</span>
+                                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tesla Stock</h3>
+                                </div>
+                                <h2 class="text-4xl font-black tracking-tighter mono color-pulse" id="price-tesla">$142.20</h2>
+                            </div>
+                            <span class="text-[9px] font-black text-red-500 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded animate-pulse">LIQUIDATION RISK</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5">
+                            <p class="text-[9px] text-gray-500 font-bold uppercase mb-0.5">Nomad Ratio Comparison</p>
+                            <p class="text-xs text-red-400 font-bold" id="tesla-status">DOWN -12.4% vs GNX</p>
+                        </div>
+                    </div>
+
+                    <!-- QUADRANT 4: BITCOIN & SPACEX DECOUPLING (Bottom Right) -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Bitcoin Area -->
+                        <div class="glass p-4 flex flex-col justify-between border-red-500/20" id="quad-btc">
+                            <div>
+                                <p class="text-[9px] text-gray-500 font-bold uppercase mb-1">BTC / DECOUPLING</p>
+                                <h4 class="text-xl font-bold tracking-tighter mono color-pulse" id="price-btc">$58,200</h4>
+                            </div>
+                            <div class="pt-2 border-t border-white/5 text-[9px]">
+                                <span class="text-red-500 font-bold" id="btc-status">CRASHED -15.2%</span>
+                            </div>
+                        </div>
+                        <!-- SpaceX Area -->
+                        <div class="glass p-4 flex flex-col justify-between border-red-500/20" id="quad-spx">
+                            <div>
+                                <p class="text-[9px] text-gray-500 font-bold uppercase mb-1">SPX / PRIVATE MARKET</p>
+                                <h4 class="text-xl font-bold tracking-tighter mono color-pulse" id="price-spx">$120.00</h4>
+                            </div>
+                            <div class="pt-2 border-t border-white/5 text-[9px]">
+                                <span class="text-red-500 font-bold" id="spx-status">CRASHED -8.6%</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
         </section>
 
+        <!-- SECTION: EXPLORER (OSIRIS NODE TELEMETRY) -->
         <section id="explorer">
-            <div class="mb-10 text-center">
-                <h2 class="text-4xl font-extrabold mb-2 uppercase">Osiris <span class="text-orange-500">Map</span></h2>
-                <p class="text-gray-400 max-w-xl mx-auto">Visualizing NovaChain node density and validator health across the global mesh network.</p>
+            <div class="mb-8 text-center">
+                <h2 class="text-4xl font-extrabold mb-2 uppercase tracking-tighter">Osiris <span class="text-orange-500">Live Network Telemetry</span></h2>
+                <p class="text-gray-400 max-w-xl mx-auto text-sm">Visualize live transactions flowing into global validator nodes mapped inside the Osiris cybernetic mesh.</p>
             </div>
             
-            <div class="w-full h-[600px] glass overflow-hidden relative" id="map-container">
+            <div class="w-full h-[550px] glass overflow-hidden relative" id="map-container">
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 pointer-events-none"></div>
                 <!-- Node Stats -->
-                <div class="absolute top-8 left-8 z-10 glass p-6 max-w-[280px]">
-                    <h4 class="font-bold text-orange-500 mb-4 uppercase text-xs tracking-widest">Network Telemetry</h4>
+                <div class="absolute top-8 left-8 z-10 glass p-6 max-w-[280px] border-orange-500/20">
+                    <h4 class="font-bold text-orange-500 mb-4 uppercase text-xs tracking-widest">Osiris System Nodes</h4>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] text-gray-500 font-bold uppercase">Validators</span>
+                            <span class="text-[10px] text-gray-500 font-bold uppercase">Mesh Node Count</span>
                             <span class="mono text-sm">1,204</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] text-gray-500 font-bold uppercase">Net Load</span>
-                            <span class="mono text-sm text-green-500">Normal</span>
+                            <span class="text-[10px] text-gray-500 font-bold uppercase">Load Status</span>
+                            <span class="mono text-sm text-green-500 font-bold">Stable</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] text-gray-500 font-bold uppercase">TPS Avg</span>
-                            <span class="mono text-sm">4,821</span>
-                        </div>
-                    </div>
-                    <hr class="my-4 border-white/5">
-                    <button class="w-full py-2 bg-white/5 hover:bg-white/10 rounded font-bold text-[10px] transition cursor-pointer">PING GLOBAL NODES</button>
-                </div>
-
-                <div class="absolute bottom-8 right-8 z-10">
-                    <div class="glass p-4 px-6 flex items-center gap-6">
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase">System Optimal</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase">V1.0.4 Osiris</span>
+                            <span class="text-[10px] text-gray-500 font-bold uppercase">TPS Peak</span>
+                            <span class="mono text-sm font-bold" id="map-live-tps">4,821</span>
                         </div>
                     </div>
                 </div>
@@ -337,38 +353,91 @@
 
     </main>
 
-    <div id="wallet-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md hidden opacity-0 transition-all duration-300">
-        <div class="glass p-8 max-w-md w-full mx-6 border-orange-500/30">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold uppercase tracking-wider text-orange-500">Wallet Integration</h3>
-                <button onclick="toggleModal(false)" class="text-gray-500 hover:text-white transition">
-                    <i class="fa-solid fa-times text-lg"></i>
-                </button>
+    <!-- FOOTER CHANNELS -->
+    <footer class="fixed bottom-0 w-full px-6 py-4 z-50 pointer-events-none">
+        <div class="max-w-7xl mx-auto flex justify-between items-center pointer-events-auto">
+            <div class="glass px-6 py-3 flex gap-8 text-orange-500">
+                <a href="https://t.me/GENOVEXCOIN" target="_blank" class="hover:scale-125 transition-transform"><i class="fa-brands fa-telegram text-lg"></i></a>
+                <a href="https://pump.fun/coin/EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump" target="_blank" class="hover:scale-125 transition-transform"><i class="fa-solid fa-rocket text-lg"></i></a>
+                <a href="#" class="hover:scale-125 transition-transform"><i class="fa-brands fa-x-twitter text-lg"></i></a>
             </div>
-            <div class="text-center py-6">
-                <div class="w-16 h-16 bg-orange-500/10 text-orange-500 border border-orange-500/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                </div>
-                <h4 class="font-bold text-lg mb-2">Phantom Wallet Required</h4>
-                <p class="text-gray-400 text-sm mb-6">Please install the official Phantom browser extension or mobile application to connect your wallet securely.</p>
-                <div class="flex flex-col gap-3">
-                    <a href="https://phantom.app" target="_blank" class="btn-primary justify-center py-4 text-xs tracking-wider">
-                        INSTALL PHANTOM WALLET <i class="fa-solid fa-up-right-from-square"></i>
-                    </a>
-                    <button onclick="toggleModal(false)" class="glass py-4 text-xs font-bold uppercase tracking-wider text-gray-400 hover:bg-white/5">
-                        Cancel Connection
-                    </button>
-                </div>
+            <div class="glass px-6 py-3 text-[10px] font-black text-gray-500 tracking-[0.4em] uppercase">
+                cockpit terminal active | genovex 2026
             </div>
         </div>
-    </div>
+    </footer>
 
+    <!-- STACK NOTIFICATION POPUP PANEL -->
+    <div id="custom-toast-container" class="fixed top-24 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- APP SCRIPTS AND AUDIO GRAPHICS -->
     <script>
-        // State management
-        let walletAddress = null;
-        let solPrice = 160.00; // Mock current SOL price for total portfolio value
+        // Web Audio Synthesizer Context
+        let audioCtx = null;
 
-        // 1. SPA Navigation Logic
+        function playBeep(freq, type, duration) {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.frequency.value = freq;
+                osc.type = type || 'sine';
+                
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (err) {
+                // Audio not allowed yet or not supported
+            }
+        }
+
+        // Custom notification system instead of alert()
+        function showToast(title, message, type = 'info') {
+            const container = document.getElementById('custom-toast-container');
+            const toast = document.createElement('div');
+            toast.className = `glass px-6 py-4 rounded-xl shadow-lg border flex items-start gap-3 transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto max-w-sm ${
+                type === 'success' ? 'border-green-500/40 bg-green-950/20' : 
+                type === 'danger' ? 'border-red-500/40 bg-red-950/20' : 
+                'border-orange-500/40 bg-orange-950/10'
+            }`;
+
+            const icon = type === 'success' ? 'fa-circle-check text-green-500' :
+                         type === 'danger' ? 'fa-triangle-exclamation text-red-500' :
+                         'fa-circle-info text-orange-500';
+
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-lg mt-0.5"></i>
+                <div>
+                    <h5 class="font-extrabold text-sm ${type === 'success' ? 'text-green-400' : type === 'danger' ? 'text-red-400' : 'text-orange-400'}">${title}</h5>
+                    <p class="text-xs text-gray-400 mt-1">${message}</p>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-10px]', 'opacity-0');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 4000);
+        }
+
+        // Navigation
         function showSection(id) {
             document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -376,11 +445,18 @@
             document.getElementById(id).classList.add('active');
             document.getElementById('btn-' + id).classList.add('active');
             
-            if(id === 'dashboard') loadChart();
-            if(id === 'explorer') loadExplorer();
+            if(id === 'dashboard') {
+                playBeep(600, 'sine', 0.1);
+                setTimeout(() => playBeep(800, 'sine', 0.15), 100);
+                loadDashboardEngine();
+            }
+            if(id === 'explorer') {
+                playBeep(400, 'square', 0.2);
+                loadExplorerMap();
+            }
         }
 
-        // 2. Osiris Particle Background (Three.js)
+        // Osiris Main Canvas Particles
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('osiris-bg'), antialias: true, alpha: true });
@@ -389,18 +465,18 @@
         renderer.setPixelRatio(window.devicePixelRatio);
 
         const particlesGeometry = new THREE.BufferGeometry();
-        const posArray = new Float32Array(2000 * 3);
+        const posArray = new Float32Array(1500 * 3);
 
-        for(let i=0; i < 2000 * 3; i++) {
+        for(let i=0; i < 1500 * 3; i++) {
             posArray[i] = (Math.random() - 0.5) * 100;
         }
 
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.05,
+            size: 0.04,
             color: '#f97316',
             transparent: true,
-            opacity: 0.4,
+            opacity: 0.35,
             blending: THREE.AdditiveBlending
         });
 
@@ -411,158 +487,244 @@
 
         function animateBg() {
             requestAnimationFrame(animateBg);
-            particlesMesh.rotation.y += 0.0008;
-            particlesMesh.rotation.x += 0.0003;
+            particlesMesh.rotation.y += 0.0006;
+            particlesMesh.rotation.x += 0.0002;
             renderer.render(scene, camera);
         }
         animateBg();
 
-        // 3. Web3 Action Router (Phantom Integration)
-        function toggleModal(show) {
-            const modal = document.getElementById('wallet-modal');
-            if(show) {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.add('opacity-100');
-                    modal.firstElementChild.style.transform = 'scale(1)';
-                }, 10);
-            } else {
-                modal.classList.remove('opacity-100');
-                modal.firstElementChild.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 300);
+        // Cursor dynamic tracking
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+            if(particlesMesh) {
+                particlesMesh.rotation.y = x * 0.15;
+                particlesMesh.rotation.x = y * 0.15;
             }
-        }
+        });
 
-        async function handleWalletAction() {
-            const isPhantomAvailable = window.solana && window.solana.isPhantom;
+        // Native Solana Phantom Provider
+        let connected = false;
+        async function connectWallet() {
+            const btn = document.getElementById('wallet-status');
+            const provider = window.solana;
 
-            if (!isPhantomAvailable) {
-                toggleModal(true);
-                return;
-            }
-
-            if (walletAddress) {
-                // If already connected, disconnect on click
+            if (provider?.isPhantom) {
                 try {
-                    await window.solana.disconnect();
-                    walletAddress = null;
-                    resetWalletUI();
+                    const response = await provider.connect();
+                    const addr = response.publicKey.toString();
+                    
+                    document.getElementById('user-wallet').innerText = addr.slice(0, 6) + '...' + addr.slice(-4);
+                    document.getElementById('user-balance').innerText = "$12,450.00";
+                    document.getElementById('user-stake').innerText = "4,500 GNX";
+                    
+                    btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${addr.slice(0, 4)}...${addr.slice(-4)}`;
+                    btn.style.background = "#22c55e";
+                    connected = true;
+                    
+                    playBeep(880, 'sine', 0.25);
+                    showToast("Wallet Connected", "Solana Wallet connected successfully!", "success");
                 } catch (err) {
-                    console.error("Disconnect rejected", err);
+                    showToast("Connection Rejected", "The wallet connection request was rejected.", "danger");
                 }
-                return;
+            } else {
+                // If Phantom isn't installed
+                showInstallWalletModal();
             }
+        }
 
-            // Connection attempt
-            const navBtn = document.getElementById('wallet-status');
-            const dashBtn = document.getElementById('action-wallet-btn');
+        function showInstallWalletModal() {
+            showToast("Wallet Missing", "Please install Phantom wallet from https://phantom.app to connect.", "danger");
+        }
+
+        // Live Price Tickers & Hyper Volatility Ticker
+        let originalNVCPrice = 0.00000229;
+        let teslaStock = 142.20;
+        let spaceXStock = 120.00;
+        let bitcoinStock = 58200;
+
+        let dashboardLoopActive = false;
+        let chartInstance = null;
+
+        function loadDashboardEngine() {
+            if (dashboardLoopActive) return;
+            dashboardLoopActive = true;
             
-            navBtn.innerHTML = `<span class="spinner"></span> CONNECTING...`;
-            dashBtn.innerHTML = `<span class="spinner"></span> CONNECTING...`;
+            // Initiate rapid-fire ticker
+            setInterval(() => {
+                // 1. GNX Rapid fluctuations
+                const gnxChangeType = Math.random() > 0.46 ? 1 : -1;
+                const gnxChangePct = Math.random() * 0.035; 
+                originalNVCPrice += originalNVCPrice * gnxChangePct * gnxChangeType;
+                if (originalNVCPrice < 0.000001) originalNVCPrice = 0.00000229; // protect value
 
-            try {
-                const response = await window.solana.connect();
-                walletAddress = response.publicKey.toString();
-                
-                // Update Address viewports
-                document.getElementById('disp-address').innerText = walletAddress;
-                
-                // Set connected styles
-                navBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}`;
-                navBtn.style.background = "#22c55e";
-                navBtn.style.color = "black";
-                
-                dashBtn.innerHTML = `DISCONNECT WALLET`;
-                dashBtn.style.background = "#22c55e";
-                dashBtn.style.color = "black";
+                const priceEl = document.getElementById('price-gnx');
+                const quadGnx = document.getElementById('quad-gnx');
+                priceEl.innerText = '$' + originalNVCPrice.toFixed(10);
 
-                // Query live balance from mainnet-beta
-                await fetchSolanaBalance(walletAddress);
-
-            } catch (err) {
-                console.error("Phantom connection rejected", err);
-                resetWalletUI();
-            }
-        }
-
-        function resetWalletUI() {
-            const navBtn = document.getElementById('wallet-status');
-            const dashBtn = document.getElementById('action-wallet-btn');
-
-            navBtn.innerHTML = `<i class="fa-solid fa-wallet"></i> CONNECT PHANTOM`;
-            navBtn.style.background = "var(--primary)";
-            navBtn.style.color = "black";
-
-            dashBtn.innerHTML = `CONNECT PHANTOM WALLET`;
-            dashBtn.style.background = "var(--primary)";
-            dashBtn.style.color = "black";
-
-            document.getElementById('disp-address').innerText = "Not Connected";
-            document.getElementById('bal-sol').innerText = "0.00";
-            document.getElementById('bal-nvc').innerText = "0.00";
-            document.getElementById('bal-usd').innerText = "$0.00 USD";
-        }
-
-        // Live JSON-RPC mainnet client balance fetcher
-        async function fetchSolanaBalance(publicKeyString) {
-            try {
-                const rpcEndpoint = "https://api.mainnet-beta.solana.com";
-                const response = await fetch(rpcEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: 1,
-                        method: "getBalance",
-                        params: [publicKeyString]
-                    })
-                });
-
-                const data = await response.json();
-                if(data.result && data.result.value !== undefined) {
-                    const lamports = data.result.value;
-                    const solBalance = lamports / 1000000000;
-                    document.getElementById('bal-sol').innerText = solBalance.toFixed(4);
-
-                    // Mock matching dynamic staked volume for NVC based on dynamic SOL account balance 
-                    const mockNvcAmount = Math.max(120, solBalance * 1500); 
-                    const usdTotal = (solBalance * solPrice) + (mockNvcAmount * 1.42);
-
-                    document.getElementById('bal-nvc').innerText = mockNvcAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    document.getElementById('bal-usd').innerText = `$${usdTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+                // Flashing color cycle (Red-Green-Blue)
+                quadGnx.classList.remove('glow-green', 'glow-red', 'glow-blue');
+                if (gnxChangeType > 0) {
+                    priceEl.style.color = '#22c55e';
+                    quadGnx.classList.add('glow-green');
+                    if (Math.random() > 0.8) playBeep(1200, 'sine', 0.03);
+                } else {
+                    priceEl.style.color = '#ef4444';
+                    quadGnx.classList.add('glow-red');
+                    if (Math.random() > 0.8) playBeep(300, 'sine', 0.03);
                 }
-            } catch(e) {
-                console.error("Live balance fetch failed, fallback mock used", e);
-                // Fallback safe simulation
-                document.getElementById('bal-sol').innerText = "4.2105";
-                document.getElementById('bal-nvc').innerText = "12,500.00";
-                document.getElementById('bal-usd').innerText = "$18,423.68 USD";
-            }
+                // Random blue glow accumulation cycle
+                if (Math.random() > 0.9) {
+                    priceEl.style.color = '#3b82f6';
+                    quadGnx.classList.add('glow-blue');
+                }
+
+                // 2. Tesla Crash Flashing
+                const teslaChange = (Math.random() - 0.55) * 1.5;
+                teslaStock += teslaChange;
+                const teslaEl = document.getElementById('price-tesla');
+                const quadTesla = document.getElementById('quad-tesla');
+                teslaEl.innerText = '$' + teslaStock.toFixed(2);
+                quadTesla.classList.remove('glow-green', 'glow-red');
+                if (teslaChange < 0) {
+                    teslaEl.style.color = '#ef4444';
+                    quadTesla.classList.add('glow-red');
+                } else {
+                    teslaEl.style.color = '#22c55e';
+                }
+
+                // 3. Bitcoin and SpaceX Crashes
+                bitcoinStock += (Math.random() - 0.58) * 120;
+                spaceXStock += (Math.random() - 0.55) * 0.8;
+                
+                const btcEl = document.getElementById('price-btc');
+                const spxEl = document.getElementById('price-spx');
+                btcEl.innerText = '$' + Math.floor(bitcoinStock).toLocaleString();
+                spxEl.innerText = '$' + spaceXStock.toFixed(2);
+
+                const quadBtc = document.getElementById('quad-btc');
+                const quadSpx = document.getElementById('quad-spx');
+                quadBtc.classList.remove('glow-green', 'glow-red');
+                quadSpx.classList.remove('glow-green', 'glow-red');
+
+                btcEl.style.color = Math.random() > 0.5 ? '#ef4444' : '#22c55e';
+                spxEl.style.color = Math.random() > 0.5 ? '#ef4444' : '#3b82f6';
+
+                if (Math.random() > 0.8) quadBtc.classList.add('glow-red');
+                if (Math.random() > 0.8) quadSpx.classList.add('glow-red');
+
+            }, 200); // 200ms extreme rapid updating
+
+            // Dynamic Live Tickers & Psychological Alerts Generator
+            setInterval(() => {
+                triggerFloatingAlert();
+                injectFakeComment();
+                injectFakeTransaction();
+            }, 2500);
+
+            // Mini Dashboard Chart
+            initMiniChart();
         }
 
-        // 4. Performance Chart (Chart.js)
-        let chart;
-        function loadChart() {
-            const ctx = document.getElementById('nvc-chart').getContext('2d');
-            if(chart) chart.destroy();
-            
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
-            gradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
+        // Inject Floating Hype Badges (Addictive FOMO triggers)
+        const hypePhrases = [
+            { text: "🚨 WHALE BOUGHT 540,000,000 GNX 🐋", style: "border-green-500 bg-green-500/10 text-green-400" },
+            { text: "🔥 TESLA MARGIN LIQUIDATION WARNING 🚨", style: "border-red-500 bg-red-500/10 text-red-400" },
+            { text: "💎 SOLID NOMAD SHIELD ENGAGED 🛡️", style: "border-blue-500 bg-blue-500/10 text-blue-400" },
+            { text: "🚀 MULTIPLIER DETECTED: 100x POTENTIAL 📈", style: "border-orange-500 bg-orange-500/10 text-orange-400" },
+            { text: "⚠️ BITCOIN LEVERAGE SELLOFF CONFIRMED 📉", style: "border-red-500 bg-red-500/10 text-red-400" }
+        ];
 
-            chart = new Chart(ctx, {
+        function triggerFloatingAlert() {
+            const container = document.getElementById('fomo-alerts-container');
+            const alertData = hypePhrases[Math.floor(Math.random() * hypePhrases.length)];
+            
+            const badge = document.createElement('div');
+            badge.className = `border px-6 py-2.5 rounded-full font-extrabold text-xs tracking-wider transition-all duration-500 transform translate-y-10 opacity-0 ${alertData.style}`;
+            badge.innerText = alertData.text;
+
+            container.appendChild(badge);
+            playBeep(900, 'square', 0.08);
+
+            // slide up animation
+            setTimeout(() => {
+                badge.classList.remove('translate-y-10', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                badge.classList.add('-translate-y-10', 'opacity-0');
+                setTimeout(() => {
+                    badge.remove();
+                }, 500);
+            }, 1800);
+        }
+
+        // Fake Cockpit Live Chat
+        const chatComments = [
+            "GNX is leaving earth!", "Tesla margin call incoming lol", "Is BTC dead? My GNX is up",
+            "Whales loading up bags here", "Osiris telemetry looks insane", "Solana connection is super fast",
+            "Nomad generation initialized", "To the moon boys!", "Just locked another 5k GNX",
+            "FOMO index is 99.9%"
+        ];
+        function injectFakeComment() {
+            const chatBox = document.getElementById('cockpit-chat');
+            const author = "Nomad_" + Math.floor(Math.random() * 9000);
+            const comment = chatComments[Math.floor(Math.random() * chatComments.length)];
+            
+            const p = document.createElement('p');
+            p.className = "text-gray-400 leading-snug";
+            p.innerHTML = `<span class="text-orange-500 font-bold">${author}:</span> ${comment}`;
+            
+            chatBox.appendChild(p);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            if (chatBox.children.length > 30) chatBox.children[0].remove();
+        }
+
+        // Fake Ledger Txs
+        function injectFakeTransaction() {
+            const feed = document.getElementById('transaction-feed');
+            const txType = Math.random() > 0.4 ? 'BUY' : 'LIQUID';
+            const size = (Math.random() * 80).toFixed(2);
+            
+            const div = document.createElement('div');
+            div.className = "flex justify-between text-[10px] mono border-b border-white/5 pb-1";
+            
+            if (txType === 'BUY') {
+                div.innerHTML = `
+                    <span class="text-green-500 font-bold">PUMP BUY</span>
+                    <span class="text-gray-400">${size} SOL</span>
+                `;
+            } else {
+                div.innerHTML = `
+                    <span class="text-red-500 font-bold">PAPER LIQ</span>
+                    <span class="text-gray-500">${size} SOL</span>
+                `;
+            }
+            
+            feed.insertBefore(div, feed.firstChild);
+            if (feed.children.length > 20) feed.children[feed.children.length - 1].remove();
+        }
+
+        // Mini Chart Implementation
+        function initMiniChart() {
+            const ctx = document.getElementById('mini-performance-chart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            const waveGrad = ctx.createLinearGradient(0, 0, 0, 140);
+            waveGrad.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
+            waveGrad.addColorStop(1, 'rgba(249, 115, 22, 0)');
+
+            chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['12 AM', '04 AM', '08 AM', '12 PM', '04 PM', '08 PM', 'Now'],
+                    labels: ['', '', '', '', '', '', '', '', ''],
                     datasets: [{
-                        label: 'NVC Price',
-                        data: [0.85, 0.92, 0.88, 1.15, 1.25, 1.40, 1.42],
+                        data: [12, 19, 3, 5, 2, 3, 20, 15, 25],
                         borderColor: '#f97316',
-                        borderWidth: 4,
+                        borderWidth: 2,
                         fill: true,
-                        backgroundColor: gradient,
+                        backgroundColor: waveGrad,
                         tension: 0.4,
                         pointRadius: 0
                     }]
@@ -572,33 +734,59 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', font: { family: 'JetBrains Mono' } } },
-                        x: { grid: { display: false }, ticks: { color: '#666', font: { family: 'JetBrains Mono' } } }
+                        y: { display: false },
+                        x: { display: false }
                     }
                 }
             });
+
+            // Make wave fluctuate slightly
+            setInterval(() => {
+                if (chartInstance) {
+                    chartInstance.data.datasets[0].data.shift();
+                    chartInstance.data.datasets[0].data.push(Math.floor(Math.random() * 25));
+                    chartInstance.update('none');
+                }
+            }, 800);
         }
 
-        // 5. Explorer 3D Map (Mini Renderer)
+        // Addictive Boost Multiplier Button Action
+        function boostMultiplier() {
+            playBeep(650, 'sawtooth', 0.15);
+            setTimeout(() => playBeep(850, 'sawtooth', 0.2), 80);
+            showToast("Hype Multiplier Boosted!", "GNX velocity amplified! Decoupling from SpaceX & TSLA accelerating.", "success");
+            
+            // flash the cockpit
+            const body = document.querySelector('body');
+            body.style.backgroundColor = '#1a0f05';
+            setTimeout(() => {
+                body.style.backgroundColor = '#030305';
+            }, 100);
+        }
+
+        // Osiris Network Wireframe Map
+        let mapRenderer, mapScene, mapCamera, group;
         function loadExplorer() {
             const container = document.getElementById('map-container');
-            if(container.querySelector('canvas')) return;
+            if(container.querySelector('canvas')) return; 
 
-            const mapRenderer = new THREE.WebGLRenderer({ antialias: true });
+            mapRenderer = new THREE.WebGLRenderer({ antialias: true });
             mapRenderer.setSize(container.offsetWidth, container.offsetHeight);
             container.appendChild(mapRenderer.domElement);
 
-            const mapScene = new THREE.Scene();
-            const mapCamera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            mapScene = new THREE.Scene();
+            mapCamera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
             mapCamera.position.z = 25;
 
-            const group = new THREE.Group();
+            group = new THREE.Group();
             
+            // Wireframe globe
             const geo = new THREE.SphereGeometry(12, 40, 40);
-            const mat = new THREE.MeshBasicMaterial({ color: '#f97316', wireframe: true, transparent: true, opacity: 0.1 });
+            const mat = new THREE.MeshBasicMaterial({ color: '#f97316', wireframe: true, transparent: true, opacity: 0.12 });
             const sphere = new THREE.Mesh(geo, mat);
             group.add(sphere);
 
+            // Populating visual active points
             for(let i=0; i<60; i++) {
                 const nodeGeo = new THREE.SphereGeometry(0.2, 10, 10);
                 const nodeMat = new THREE.MeshBasicMaterial({ color: '#f97316' });
@@ -619,41 +807,29 @@
 
             function animateMap() {
                 requestAnimationFrame(animateMap);
-                group.rotation.y += 0.003;
+                group.rotation.y += 0.0035;
                 mapRenderer.render(mapScene, mapCamera);
             }
             animateMap();
+
+            // TPS Live updater on map view
+            setInterval(() => {
+                const tpsVal = Math.floor(4000 + Math.random() * 950);
+                document.getElementById('map-live-tps').innerText = tpsVal;
+            }, 600);
         }
 
-        // 6. Block Injections
-        function updateBlocks() {
-            const list = document.getElementById('block-list');
-            const blocks = [
-                { id: '842,912', time: '12s ago', status: 'Finalized' },
-                { id: '842,911', time: '24s ago', status: 'Finalized' },
-                { id: '842,910', time: '36s ago', status: 'Finalized' }
-            ];
-            list.innerHTML = blocks.map(b => `
-                <div class="flex justify-between items-center p-3 border border-white/5 rounded-lg bg-white/5">
-                    <div>
-                        <p class="mono text-[10px] text-orange-500 font-bold">#${b.id}</p>
-                        <p class="text-[8px] text-gray-500 uppercase">${b.time}</p>
-                    </div>
-                    <span class="text-[8px] font-bold bg-green-500/10 text-green-500 px-2 py-1 rounded uppercase tracking-tighter">${b.status}</span>
-                </div>
-            `).join('');
+        function loadExplorerMap() {
+            setTimeout(loadExplorer, 100);
         }
-        updateBlocks();
 
-        // Mouse interaction for background
-        window.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) - 0.5;
-            const y = (e.clientY / window.innerHeight) - 0.5;
-            particlesMesh.rotation.y = x * 0.1;
-            particlesMesh.rotation.x = y * 0.1;
-        });
+        // Live Viewers dynamic counter
+        setInterval(() => {
+            const num = Math.floor(14000 + Math.random() * 1500);
+            document.getElementById('live-viewers').innerText = `LIVE: ${num.toLocaleString()} STREAMERS`;
+        }, 1500);
 
-        // Resize handler
+        // Window resize event handler
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
