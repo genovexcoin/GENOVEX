@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>GENOVEX · Next‑Gen Security Suite</title>
+    <title>GENOVEX · Oracle v50 — Ultimate Security Suite</title>
 
     <!-- ================================================================
-    EXTERNAL LIBRARIES (3D, Chart, Fonts, Icons)
+    EXTERNAL LIBRARIES
     ================================================================ -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Three.js Post-processing for Bloom -->
+    <!-- Three.js Post-processing (Bloom + UnrealBloomPass) -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
@@ -20,42 +20,44 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet" />
 
     <style>
         /* ================================================================
-           ROOT & RESET (500+ lines)
+           ROOT & RESET (ultra premium)
            ================================================================ */
         :root {
             --primary: #f97316;
             --primary-dark: #ea580c;
             --primary-light: #fb923c;
-            --primary-glow: rgba(249, 115, 22, 0.3);
-            --bg-deep: #050508;
-            --bg-card: rgba(10, 10, 20, 0.85);
-            --border-glow: rgba(249, 115, 22, 0.15);
+            --primary-glow: rgba(249,115,22,0.35);
+            --bg-deep: #05050a;
+            --bg-card: rgba(8,8,18,0.82);
+            --border-glow: rgba(249,115,22,0.12);
             --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --text-muted: #6b7280;
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-            --shadow-xl: 0 30px 80px rgba(0, 0, 0, 0.8);
-            --transition-smooth: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            --text-secondary: #b8b8c0;
+            --text-muted: #6b6b7a;
+            --radius-xl: 28px;
+            --radius-lg: 18px;
+            --shadow-xl: 0 40px 100px rgba(0,0,0,0.8);
+            --transition-smooth: 0.5s cubic-bezier(0.16,1,0.3,1);
+            --transition-spring: 0.6s cubic-bezier(0.34,1.56,0.64,1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-deep);
             color: var(--text-primary);
             overflow-x: hidden;
-            line-height: 1.6;
+            line-height: 1.7;
             scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* ================================================================
-           THREE.JS BACKGROUND (4K professional with Bloom)
+           THREE.JS BACKGROUND (Física + Partículas)
            ================================================================ */
         #three-bg {
             position: fixed;
@@ -69,106 +71,118 @@
         }
 
         /* ================================================================
-           GLASS MORPHISM (enhanced)
+           GLASS MORPHISM (mejorado con efecto de borde dinámico)
            ================================================================ */
         .glass {
             background: var(--bg-card);
-            backdrop-filter: blur(24px) saturate(1.2);
-            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            backdrop-filter: blur(28px) saturate(1.4);
+            -webkit-backdrop-filter: blur(28px) saturate(1.4);
             border: 1px solid var(--border-glow);
             border-radius: var(--radius-lg);
             transition: all var(--transition-smooth);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(249,115,22,0.03), transparent 70%);
+            pointer-events: none;
         }
         .glass:hover {
             border-color: var(--primary);
-            box-shadow: 0 8px 48px rgba(249, 115, 22, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .glass-dark {
-            background: rgba(5, 5, 10, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(249, 115, 22, 0.06);
-            border-radius: var(--radius-lg);
+            box-shadow: 0 12px 60px rgba(249,115,22,0.06), inset 0 0 80px rgba(249,115,22,0.02);
+            transform: translateY(-3px);
         }
 
         /* ================================================================
-           GLOW EFFECTS (dynamic)
-           ================================================================ */
-        .glow-orange { box-shadow: 0 0 30px rgba(249, 115, 22, 0.25); border-color: var(--primary) !important; }
-        .glow-green { box-shadow: 0 0 30px rgba(34, 197, 94, 0.25); border-color: #22c55e !important; }
-        .glow-blue { box-shadow: 0 0 30px rgba(59, 130, 246, 0.25); border-color: #3b82f6 !important; }
-
-        /* ================================================================
-           BUTTONS (premium)
+           BOTONES (con efecto de luz física)
            ================================================================ */
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: #000;
             font-weight: 800;
-            padding: 14px 32px;
+            padding: 16px 38px;
             border-radius: 60px;
-            transition: all var(--transition-smooth);
+            transition: all var(--transition-spring);
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
             border: none;
-            font-size: 14px;
+            font-size: 15px;
             letter-spacing: 0.02em;
-            box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+            box-shadow: 0 6px 30px rgba(249,115,22,0.3);
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
         }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.25), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .btn-primary:hover::after { opacity: 1; }
         .btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 40px rgba(249, 115, 22, 0.5);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 50px rgba(249,115,22,0.5);
         }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .btn-primary:active { transform: scale(0.96); }
 
         .btn-outline {
             background: transparent;
             border: 2px solid var(--primary);
             color: var(--primary);
             font-weight: 700;
-            padding: 12px 28px;
+            padding: 14px 32px;
             border-radius: 60px;
-            transition: all var(--transition-smooth);
+            transition: all var(--transition-spring);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             font-size: 14px;
+            position: relative;
+            overflow: hidden;
         }
         .btn-outline:hover {
-            background: rgba(249, 115, 22, 0.08);
+            background: rgba(249,115,22,0.08);
             transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(249, 115, 22, 0.15);
-        }
-
-        .btn-sm {
-            padding: 8px 18px;
-            font-size: 11px;
-            border-radius: 40px;
+            box-shadow: 0 0 40px rgba(249,115,22,0.12);
+            border-color: var(--primary-light);
         }
 
         .btn-dark {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.04);
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 12px 24px;
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 12px 26px;
             border-radius: 60px;
-            transition: var(--transition-smooth);
+            transition: all var(--transition-spring);
             cursor: pointer;
             font-weight: 600;
+            font-size: 13px;
+            backdrop-filter: blur(8px);
         }
         .btn-dark:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 8px 20px;
+            font-size: 11px;
         }
 
         /* ================================================================
-           NAVIGATION (sticky glass)
+           NAVEGACIÓN (sticky glass con animación de entrada)
            ================================================================ */
         .nav-link {
             transition: all var(--transition-smooth);
@@ -178,19 +192,21 @@
             font-weight: 700;
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
+            padding: 6px 0;
         }
         .nav-link:hover, .nav-link.active { color: var(--primary); }
         .nav-link.active::after {
             content: '';
             position: absolute;
-            bottom: -6px;
+            bottom: -4px;
             left: 0;
             width: 100%;
             height: 2px;
             background: var(--primary);
             border-radius: 4px;
-            animation: slideUnderline 0.4s ease;
+            animation: slideUnderline 0.5s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 0 20px var(--primary-glow);
         }
         @keyframes slideUnderline {
             from { transform: scaleX(0); }
@@ -198,474 +214,519 @@
         }
 
         /* ================================================================
-           SECTIONS
+           SECCIONES (transición con física de rebote)
            ================================================================ */
         section {
             display: none;
-            animation: fadeUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation: fadeUpSpring 0.9s cubic-bezier(0.34,1.56,0.64,1) forwards;
         }
         section.active { display: block; }
 
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* ================================================================
-           GRID BACKGROUND (subtle)
-           ================================================================ */
-        .hype-grid {
-            background-image:
-                linear-gradient(rgba(249, 115, 22, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(249, 115, 22, 0.03) 1px, transparent 1px);
-            background-size: 32px 32px;
+        @keyframes fadeUpSpring {
+            0% { opacity: 0; transform: translateY(60px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* ================================================================
-           SCROLLBAR
+           SCROLLBAR (custom)
            ================================================================ */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg-deep); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 20px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
 
         /* ================================================================
-           SCANNER LOGS (terminal style)
+           SCANNER LOGS (terminal con efecto de escritura)
            ================================================================ */
         .scan-logs {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
-            color: #9A8A80;
-            max-height: 180px;
+            color: #b8a89a;
+            max-height: 200px;
             overflow-y: auto;
-            padding-right: 6px;
-            line-height: 1.8;
+            padding-right: 8px;
+            line-height: 2;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(249,115,22,0.04);
         }
-        .scan-logs::-webkit-scrollbar { width: 4px; }
-        .scan-logs::-webkit-scrollbar-track { background: transparent; }
+        .scan-logs::-webkit-scrollbar { width: 3px; }
         .scan-logs::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
         .scan-logs .log-line {
-            padding: 3px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.015);
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
             display: flex;
-            gap: 12px;
+            gap: 14px;
             align-items: baseline;
-            animation: logFade 0.3s ease;
+            animation: logSlide 0.4s ease;
         }
-        @keyframes logFade {
-            from { opacity: 0; transform: translateX(-6px); }
+        @keyframes logSlide {
+            from { opacity: 0; transform: translateX(-10px); }
             to { opacity: 1; transform: translateX(0); }
         }
-        .scan-logs .log-line .time { color: #5A4A40; min-width: 75px; font-size: 10px; letter-spacing: 0.3px; }
-        .scan-logs .log-line .msg { color: #C0B0A0; flex: 1; }
-        .scan-logs .log-line .msg i { color: var(--primary); margin-right: 8px; width: 16px; text-align: center; }
-        .scan-logs .log-line.done .msg { color: #66BB6A; }
-        .scan-logs .log-line.done .msg i { color: #66BB6A; }
-        .scan-logs .log-line.error .msg { color: #EF5350; }
-        .scan-logs .log-line.error .msg i { color: #EF5350; }
+        .scan-logs .log-line .time { color: #6a5a4a; min-width: 80px; font-size: 10px; letter-spacing: 0.3px; }
+        .scan-logs .log-line .msg { color: #d0c0b0; flex: 1; }
+        .scan-logs .log-line .msg i { color: var(--primary); margin-right: 10px; width: 18px; text-align: center; }
+        .scan-logs .log-line.done .msg { color: #66bb6a; }
+        .scan-logs .log-line.done .msg i { color: #66bb6a; }
+        .scan-logs .log-line.error .msg { color: #ef5350; }
+        .scan-logs .log-line.error .msg i { color: #ef5350; }
 
         .scan-progress-bar {
             width: 100%;
-            height: 5px;
-            background: #1A120E;
+            height: 6px;
+            background: #1a1210;
             border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 14px;
+            margin-bottom: 18px;
+            position: relative;
         }
         .scan-progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark), var(--primary-light));
             border-radius: 20px;
-            transition: width 0.4s ease;
+            transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative;
+        }
+        .scan-progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: rgba(255,255,255,0.25);
+            filter: blur(6px);
+            animation: progressGlow 1.2s ease-in-out infinite;
+        }
+        @keyframes progressGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
         }
 
         /* ================================================================
-           VULNERABILITY ITEMS
+           VULNERABILIDADES (cards con efecto de inclinación 3D)
            ================================================================ */
         .vuln-item {
             background: var(--bg-deep);
-            padding: 14px 20px;
-            border-radius: 14px;
-            border-left: 4px solid var(--primary);
+            padding: 16px 22px;
+            border-radius: 16px;
+            border-left: 5px solid var(--primary);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
-            transition: var(--transition-smooth);
+            gap: 12px;
+            transition: all var(--transition-spring);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            will-change: transform;
         }
-        .vuln-item:hover { background: #1E1612; transform: translateX(4px); }
+        .vuln-item:hover {
+            background: #1a1410;
+            transform: translateX(8px) scale(1.01);
+            border-left-color: var(--primary-light);
+        }
         .vuln-item .desc { font-weight: 700; font-size: 14px; flex: 1; min-width: 130px; }
-        .vuln-item .detalle { font-size: 13px; color: var(--text-secondary); flex: 2; min-width: 160px; }
+        .vuln-item .detalle { font-size: 13px; color: var(--text-secondary); flex: 2; min-width: 170px; }
         .vuln-item .criticidad {
             font-size: 10px;
-            font-weight: 700;
-            padding: 4px 14px;
+            font-weight: 800;
+            padding: 4px 16px;
             border-radius: 100px;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
             white-space: nowrap;
+            background: rgba(0,0,0,0.3);
         }
-        .criticidad.alta { background: #E65100; color: #fff; }
-        .criticidad.media { background: #F57C00; color: #fff; }
-        .criticidad.baja { background: #FFA726; color: #1A120E; }
+        .criticidad.alta { background: #d84315; color: #fff; }
+        .criticidad.media { background: #f57c00; color: #fff; }
+        .criticidad.baja { background: #ffb300; color: #1a120e; }
 
         /* ================================================================
-           DATA ITEMS
+           DATA ITEMS (con efecto de brillo)
            ================================================================ */
         .data-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
             font-size: 14px;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 6px;
+            transition: background 0.3s;
         }
+        .data-item:hover { background: rgba(249,115,22,0.02); border-radius: 8px; padding-left: 8px; padding-right: 8px; }
         .data-item .label { color: var(--text-muted); font-weight: 500; }
         .data-item .value {
             color: var(--text-primary);
             font-weight: 600;
             font-family: 'JetBrains Mono', monospace;
-            background: #0D0907;
-            padding: 2px 12px;
-            border-radius: 6px;
+            background: #0d0a08;
+            padding: 2px 16px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             font-size: 13px;
+            border: 1px solid rgba(249,115,22,0.04);
         }
         .data-item .value i { color: var(--primary); font-size: 12px; }
 
         /* ================================================================
-           BLOQUEADO (Premium Lock)
+           BLOQUEADO (con efecto de brillo pulsante)
            ================================================================ */
         .bloqueado {
-            background: rgba(249, 115, 22, 0.02);
-            border: 1px dashed rgba(249, 115, 22, 0.08);
-            padding: 24px 20px;
-            border-radius: 16px;
+            background: rgba(249,115,22,0.02);
+            border: 1px dashed rgba(249,115,22,0.1);
+            padding: 28px 24px;
+            border-radius: 20px;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
+            position: relative;
+            overflow: hidden;
         }
-        .bloqueado i { font-size: 32px; color: var(--primary); margin-bottom: 8px; }
-        .bloqueado h4 { font-size: 18px; margin-bottom: 4px; }
-        .bloqueado p { color: var(--text-secondary); font-size: 14px; max-width: 420px; margin: 0 auto 16px; }
+        .bloqueado::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(249,115,22,0.04), transparent 70%);
+            pointer-events: none;
+        }
+        .bloqueado i { font-size: 40px; color: var(--primary); margin-bottom: 12px; display: inline-block; animation: pulseIcon 2.5s ease-in-out infinite; }
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+        .bloqueado h4 { font-size: 20px; margin-bottom: 6px; }
+        .bloqueado p { color: var(--text-secondary); font-size: 14px; max-width: 480px; margin: 0 auto 20px; }
 
         /* ================================================================
-           CRYPTO ADDRESS
+           CRYPTO ADDRESS (con efecto de resplandor al hover)
            ================================================================ */
         .crypto-address {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             background: var(--bg-deep);
-            padding: 10px 14px;
-            border-radius: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
             word-break: break-all;
-            border: 1px solid rgba(249, 115, 22, 0.06);
+            border: 1px solid rgba(249,115,22,0.06);
             color: var(--text-secondary);
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .crypto-address:hover {
-            background: #1A120E;
+            background: #1a1410;
             border-color: var(--primary);
             color: #fff;
+            box-shadow: 0 0 30px rgba(249,115,22,0.06);
         }
+        .crypto-address i { color: var(--primary); font-size: 14px; }
 
         /* ================================================================
-           PRICING ITEMS (startup style)
+           PRICING CARDS (con efecto de elevación y brillo)
            ================================================================ */
         .pricing-item {
             background: var(--bg-deep);
-            padding: 32px 28px;
+            padding: 36px 30px;
             border-radius: var(--radius-xl);
-            border: 1px solid rgba(249, 115, 22, 0.04);
-            transition: all var(--transition-smooth);
+            border: 1px solid rgba(249,115,22,0.04);
+            transition: all var(--transition-spring);
             text-align: center;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         .pricing-item::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 30% 10%, rgba(249, 115, 22, 0.03), transparent 60%);
+            background: radial-gradient(circle at 50% 10%, rgba(249,115,22,0.03), transparent 70%);
             pointer-events: none;
         }
         .pricing-item:hover {
             border-color: var(--primary);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            transform: translateY(-12px) scale(1.01);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
         }
         .pricing-item.recomendado {
             border-color: var(--primary);
-            background: rgba(249, 115, 22, 0.02);
+            background: rgba(249,115,22,0.02);
         }
         .pricing-item.recomendado::after {
             content: '★ RECOMMENDED';
             position: absolute;
-            top: -10px;
+            top: -8px;
             right: 20px;
             background: var(--primary);
             font-size: 9px;
             font-weight: 800;
-            padding: 4px 16px;
+            padding: 4px 18px;
             border-radius: 100px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             color: #000;
+            box-shadow: 0 0 30px var(--primary-glow);
         }
         .pricing-item .plan-price {
-            font-size: 44px;
+            font-size: 48px;
             font-weight: 900;
             color: var(--primary);
-            margin: 10px 0 4px;
+            margin: 12px 0 6px;
+            letter-spacing: -0.02em;
         }
         .pricing-item .plan-price small { font-size: 16px; font-weight: 400; color: var(--text-secondary); }
-        .pricing-item ul { text-align: left; padding: 0; list-style: none; margin-bottom: 24px; flex: 1; }
+        .pricing-item ul { text-align: left; padding: 0; list-style: none; margin-bottom: 28px; flex: 1; }
         .pricing-item ul li {
-            padding: 8px 0;
+            padding: 10px 0;
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.015);
+            gap: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
         }
         .pricing-item ul li i { color: var(--primary); width: 20px; text-align: center; }
-        .pricing-item ul li .fa-times { color: #5A4A40; }
+        .pricing-item ul li .fa-times { color: #5a4a40; }
 
         /* ================================================================
-           MODAL (payment)
+           MODAL (con animación de escala y desvanecimiento)
            ================================================================ */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             z-index: 9999;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            animation: modalFade 0.4s ease;
         }
         .modal-overlay.active { display: flex; }
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         .modal-box {
             background: var(--bg-deep);
             border: 1px solid var(--border-glow);
             border-radius: var(--radius-xl);
-            padding: 36px;
-            max-width: 500px;
+            padding: 40px;
+            max-width: 520px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: var(--shadow-xl);
             position: relative;
+            animation: modalSlide 0.5s cubic-bezier(0.34,1.56,0.64,1);
         }
-        .modal-box h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
-        .modal-box .sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
-        .modal-box label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 4px; }
+        @keyframes modalSlide {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-box h2 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .modal-box .sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 28px; }
+        .modal-box label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 4px; }
         .modal-box input, .modal-box select {
             width: 100%;
-            padding: 14px 18px;
+            padding: 14px 20px;
             background: var(--bg-deep);
-            border: 1px solid rgba(249, 115, 22, 0.1);
-            border-radius: 12px;
+            border: 1px solid rgba(249,115,22,0.08);
+            border-radius: 14px;
             color: #fff;
             font-size: 15px;
             outline: none;
-            transition: var(--transition-smooth);
-            margin-bottom: 16px;
+            transition: all var(--transition-smooth);
+            margin-bottom: 18px;
             font-family: inherit;
         }
         .modal-box input:focus, .modal-box select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.06);
+            box-shadow: 0 0 0 4px rgba(249,115,22,0.04);
         }
-        .modal-box .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .modal-box .btn-primary { width: 100%; justify-content: center; font-size: 16px; padding: 16px; margin-top: 8px; }
+        .modal-box .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .modal-box .btn-primary { width: 100%; justify-content: center; font-size: 16px; padding: 18px; margin-top: 8px; }
         .modal-box .btn-close {
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 28px;
+            font-size: 32px;
             cursor: pointer;
             position: absolute;
             top: 16px;
-            right: 20px;
-            transition: var(--transition-smooth);
+            right: 22px;
+            transition: all var(--transition-smooth);
         }
         .modal-box .btn-close:hover { color: #fff; transform: rotate(90deg); }
 
         /* ================================================================
-           TOAST NOTIFICATIONS
+           TOAST NOTIFICATIONS (con física de resorte)
            ================================================================ */
         #custom-toast-container {
             position: fixed;
-            top: 100px;
+            top: 110px;
             right: 24px;
             z-index: 99999;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-width: 380px;
+            gap: 14px;
+            max-width: 400px;
             pointer-events: none;
         }
         .toast-item {
             pointer-events: auto;
-            padding: 16px 22px;
-            border-radius: 16px;
-            backdrop-filter: blur(24px);
-            background: rgba(10, 10, 20, 0.92);
-            border: 1px solid rgba(249, 115, 22, 0.15);
+            padding: 18px 26px;
+            border-radius: 18px;
+            backdrop-filter: blur(28px);
+            background: rgba(8,8,18,0.94);
+            border: 1px solid rgba(249,115,22,0.12);
             display: flex;
             align-items: flex-start;
-            gap: 14px;
-            animation: slideInRight 0.5s ease;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+            gap: 16px;
+            animation: toastIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
         }
         .toast-item.success { border-color: #22c55e; }
         .toast-item.danger { border-color: #ef4444; }
         .toast-item.info { border-color: var(--primary); }
 
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(60px) scale(0.9); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
         }
 
         /* ================================================================
-           FREE TRIAL BADGE (animated)
-           ================================================================ */
-        .trial-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #f97316, #dc2626);
-            color: #fff;
-            font-weight: 900;
-            padding: 8px 24px;
-            border-radius: 100px;
-            font-size: 15px;
-            letter-spacing: 0.02em;
-            box-shadow: 0 0 40px rgba(249, 115, 22, 0.3);
-            animation: pulseGlow 2.5s ease-in-out infinite;
-            text-transform: uppercase;
-        }
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(249, 115, 22, 0.3); }
-            50% { transform: scale(1.06); box-shadow: 0 0 60px rgba(249, 115, 22, 0.6); }
-        }
-
-        /* ================================================================
-           FEATURE CARDS (startup)
+           FEATURE CARDS (con efecto de inclinación 3D)
            ================================================================ */
         .feature-card {
-            padding: 28px 24px;
+            padding: 32px 26px;
             text-align: center;
             background: var(--bg-deep);
             border-radius: var(--radius-xl);
-            border: 1px solid rgba(249, 115, 22, 0.04);
-            transition: all var(--transition-smooth);
+            border: 1px solid rgba(249,115,22,0.04);
+            transition: all var(--transition-spring);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            will-change: transform;
         }
         .feature-card::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.02), transparent 70%);
+            background: radial-gradient(circle at 50% 0%, rgba(249,115,22,0.02), transparent 70%);
             pointer-events: none;
         }
         .feature-card:hover {
             border-color: var(--primary);
-            transform: translateY(-6px);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
         .feature-icon {
-            font-size: 40px;
+            font-size: 44px;
             color: var(--primary);
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             display: inline-block;
+            filter: drop-shadow(0 0 20px rgba(249,115,22,0.1));
+            transition: transform 0.4s;
         }
+        .feature-card:hover .feature-icon { transform: scale(1.08) rotate(-2deg); }
 
         /* ================================================================
-           TESTIMONIALS
+           TESTIMONIALS (con efecto de borde brillante)
            ================================================================ */
         .testimonial-card {
             background: var(--bg-deep);
-            padding: 24px;
+            padding: 28px;
             border-radius: var(--radius-lg);
-            border: 1px solid rgba(249, 115, 22, 0.04);
-            transition: var(--transition-smooth);
+            border: 1px solid rgba(249,115,22,0.04);
+            transition: all var(--transition-spring);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         .testimonial-card:hover {
             border-color: var(--primary);
-            transform: translateY(-4px);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 50px rgba(0,0,0,0.4);
         }
 
         /* ================================================================
-           ROADMAP / TIMELINE
+           TIMELINE (con efecto de resplandor)
            ================================================================ */
         .timeline-item {
             display: flex;
-            gap: 20px;
-            padding: 16px 0;
+            gap: 24px;
+            padding: 20px 0;
             border-left: 2px solid var(--primary);
-            padding-left: 28px;
+            padding-left: 32px;
             position: relative;
+            transition: all 0.3s;
         }
+        .timeline-item:hover { border-left-color: var(--primary-light); }
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -6px;
-            top: 20px;
-            width: 12px;
-            height: 12px;
+            left: -7px;
+            top: 24px;
+            width: 14px;
+            height: 14px;
             background: var(--primary);
             border-radius: 50%;
-            box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+            box-shadow: 0 0 30px var(--primary-glow);
+            transition: all 0.3s;
         }
-        .timeline-item .step { font-weight: 800; color: var(--primary); min-width: 60px; }
+        .timeline-item:hover::before { transform: scale(1.2); }
+        .timeline-item .step { font-weight: 800; color: var(--primary); min-width: 70px; }
         .timeline-item .content { color: var(--text-secondary); }
 
         /* ================================================================
-           TEAM MEMBERS
+           TEAM MEMBERS (con efecto de elevación)
            ================================================================ */
         .team-member {
             text-align: center;
-            padding: 20px;
+            padding: 24px;
             border-radius: var(--radius-lg);
-            border: 1px solid rgba(249, 115, 22, 0.04);
-            transition: var(--transition-smooth);
+            border: 1px solid rgba(249,115,22,0.04);
+            transition: all var(--transition-spring);
+            background: var(--bg-deep);
         }
         .team-member:hover {
             border-color: var(--primary);
-            transform: translateY(-4px);
+            transform: translateY(-8px);
+            box-shadow: 0 16px 50px rgba(0,0,0,0.4);
         }
         .team-member .avatar {
-            width: 80px;
-            height: 80px;
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 32px;
+            margin: 0 auto 14px;
+            font-size: 34px;
             font-weight: 900;
             color: #000;
-            box-shadow: 0 0 30px rgba(249, 115, 22, 0.2);
+            box-shadow: 0 0 40px rgba(249,115,22,0.15);
+            transition: transform 0.4s;
         }
+        .team-member:hover .avatar { transform: scale(1.05) rotate(-2deg); }
 
         /* ================================================================
-           FAQ (accordion)
+           FAQ (con transición suave)
            ================================================================ */
         .faq-item {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 18px 0;
         }
         .faq-item .question {
             font-weight: 700;
@@ -673,132 +734,139 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: var(--transition-smooth);
+            transition: all var(--transition-smooth);
+            font-size: 16px;
         }
         .faq-item .question:hover { color: var(--primary); }
+        .faq-item .question i { transition: transform 0.4s; }
+        .faq-item.open .question i { transform: rotate(180deg); }
         .faq-item .answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease;
+            transition: max-height 0.5s cubic-bezier(0.34,1.56,0.64,1);
             color: var(--text-secondary);
             font-size: 14px;
         }
-        .faq-item.open .answer { max-height: 200px; padding-top: 12px; }
+        .faq-item.open .answer { max-height: 200px; padding-top: 14px; }
 
         /* ================================================================
-           RESPONSIVE
-           ================================================================ */
-        @media (max-width: 1024px) {
-            .hero-title { font-size: 48px !important; }
-        }
-        @media (max-width: 768px) {
-            .hero-title { font-size: 32px !important; }
-            .nav-desktop { display: none !important; }
-            .mobile-nav { display: flex !important; }
-            .crypto-grid { grid-template-columns: 1fr !important; }
-            .pricing-grid { grid-template-columns: 1fr !important; }
-            .modal-box { padding: 24px; }
-        }
-        @media (min-width: 769px) {
-            .mobile-nav { display: none !important; }
-        }
-
-        /* ================================================================
-           SCANNER INPUT
+           INPUT GROUP (escáner)
            ================================================================ */
         .input-group-custom {
             display: flex;
-            gap: 14px;
+            gap: 16px;
             flex-wrap: wrap;
             justify-content: center;
         }
         .input-group-custom input {
             flex: 1;
-            min-width: 260px;
-            padding: 18px 26px;
+            min-width: 280px;
+            padding: 18px 28px;
             border-radius: 60px;
-            border: 1px solid rgba(249, 115, 22, 0.12);
+            border: 1px solid rgba(249,115,22,0.08);
             background: var(--bg-deep);
             color: #fff;
             font-size: 16px;
             outline: none;
-            transition: var(--transition-smooth);
+            transition: all var(--transition-smooth);
             font-family: inherit;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
         }
         .input-group-custom input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.06);
+            box-shadow: 0 0 0 4px rgba(249,115,22,0.04), inset 0 2px 10px rgba(0,0,0,0.3);
         }
-        .input-group-custom input::placeholder { color: #5A4A40; }
+        .input-group-custom input::placeholder { color: #5a4a40; }
 
-        .limit-badge {
-            font-size: 13px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 16px;
+        /* ================================================================
+           BADGES
+           ================================================================ */
+        .trial-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f97316, #dc2626);
+            color: #fff;
+            font-weight: 900;
+            padding: 10px 28px;
+            border-radius: 100px;
+            font-size: 15px;
+            letter-spacing: 0.02em;
+            box-shadow: 0 0 50px rgba(249,115,22,0.25);
+            animation: pulseGlow 3s ease-in-out infinite;
+            text-transform: uppercase;
         }
-        .limit-badge i { color: var(--primary); }
-        .limit-badge strong { color: var(--primary); }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(249,115,22,0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 0 70px rgba(249,115,22,0.4); }
+        }
 
         .premium-badge {
             background: var(--primary);
             color: #000;
             font-size: 9px;
             font-weight: 800;
-            padding: 2px 14px;
+            padding: 2px 16px;
             border-radius: 100px;
-            animation: pulseGlow 2s infinite;
+            animation: pulseGlow 2.5s infinite;
         }
 
-        /* Scroll-triggered animations (Intersection Observer) */
+        .limit-badge {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+        .limit-badge i { color: var(--primary); }
+        .limit-badge strong { color: var(--primary); }
+
+        /* ================================================================
+           REVEAL ANIMATIONS (con física de resorte)
+           ================================================================ */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: translateY(40px) scale(0.96);
+            transition: opacity 0.9s cubic-bezier(0.34,1.56,0.64,1), transform 0.9s cubic-bezier(0.34,1.56,0.64,1);
         }
         .reveal.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
-
-        /* Extra micro-interactions */
-        .hover-lift {
-            transition: transform var(--transition-smooth);
-        }
-        .hover-lift:hover { transform: translateY(-4px); }
 
         /* ================================================================
-           EXTRA UTILITY
+           UTILITIES
            ================================================================ */
         .section-title {
-            font-size: 40px;
+            font-size: 44px;
             font-weight: 900;
-            line-height: 1.1;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
         }
         .section-title span { color: var(--primary); }
 
-        /* Floating animations */
         .float-slow {
-            animation: floatSlow 6s ease-in-out infinite;
+            animation: floatSlow 7s ease-in-out infinite;
         }
         @keyframes floatSlow {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-16px); }
         }
 
         .float-fast {
-            animation: floatFast 3s ease-in-out infinite;
+            animation: floatFast 3.5s ease-in-out infinite;
         }
         @keyframes floatFast {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+            50% { transform: translateY(-10px); }
         }
 
-        /* Shimmer effect for buttons */
+        .hover-lift {
+            transition: transform var(--transition-spring);
+        }
+        .hover-lift:hover { transform: translateY(-6px); }
+
         .shimmer {
             position: relative;
             overflow: hidden;
@@ -807,30 +875,88 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
             transform: translateX(-100%);
-            animation: shimmer 3s infinite;
+            animation: shimmer 4s infinite;
         }
         @keyframes shimmer {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* ================================================================
+           RESPONSIVE
+           ================================================================ */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 48px !important; }
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 34px !important; }
+            .nav-desktop { display: none !important; }
+            .mobile-nav { display: flex !important; }
+            .crypto-grid { grid-template-columns: 1fr 1fr !important; }
+            .pricing-grid { grid-template-columns: 1fr !important; }
+            .modal-box { padding: 24px; }
+            .section-title { font-size: 32px; }
+        }
+        @media (min-width: 769px) {
+            .mobile-nav { display: none !important; }
+        }
+        @media (max-width: 480px) {
+            .crypto-grid { grid-template-columns: 1fr !important; }
+        }
+
+        /* ================================================================
+           GRID BACKGROUND (más sutil)
+           ================================================================ */
+        .hype-grid {
+            background-image:
+                linear-gradient(rgba(249,115,22,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249,115,22,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* ================================================================
+           ESTADÍSTICAS ANIMADAS
+           ================================================================ */
+        .stat-number {
+            display: inline-block;
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -0.02em;
+        }
+        .stat-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* Scrollbar for modal */
+        .modal-box::-webkit-scrollbar { width: 4px; }
+        .modal-box::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
     </style>
 </head>
 <body class="hype-grid">
 
     <!-- ================================================================
-    THREE.JS 4K BACKGROUND
+    THREE.JS BACKGROUND (Física avanzada)
     ================================================================ -->
     <canvas id="three-bg"></canvas>
 
     <!-- ================================================================
-    NAVIGATION
+    NAVEGACIÓN (mejorada)
     ================================================================ -->
     <nav class="fixed top-0 w-full z-50 px-4 sm:px-6 py-4">
         <div class="max-w-7xl mx-auto glass px-4 sm:px-6 py-3 flex justify-between items-center border-orange-500/10">
             <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('home')">
-                <div class="w-8 h-8 bg-orange-500 rounded flex items-center justify-center shadow-lg shadow-orange-500/30">
+                <div class="w-9 h-9 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 transition-transform hover:scale-110">
                     <i class="fa-solid fa-bolt-lightning text-black text-sm"></i>
                 </div>
                 <span class="text-xl sm:text-2xl font-extrabold tracking-tighter uppercase text-white">GENOVEX</span>
@@ -851,7 +977,7 @@
                     <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
                     <span class="text-[8px] font-bold text-red-500" id="live-viewers">LIVE: 14,842</span>
                 </div>
-                <button onclick="connectWallet()" id="wallet-status" class="btn-primary text-[9px] sm:text-[10px] tracking-tighter">
+                <button onclick="connectWallet()" id="wallet-status" class="btn-primary text-[9px] sm:text-[10px] tracking-tighter py-2 px-4">
                     <i class="fa-solid fa-wallet"></i> <span class="hidden xs:inline">CONNECT</span>
                 </button>
                 <button onclick="toggleTheme()" class="btn-dark btn-sm text-[9px]">
@@ -877,7 +1003,7 @@
     <div id="custom-toast-container"></div>
 
     <!-- ================================================================
-    PAYMENT MODAL
+    PAYMENT MODAL (mejorado)
     ================================================================ -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-box relative">
@@ -951,7 +1077,7 @@
     <main class="pt-24 sm:pt-28 pb-20 px-3 sm:px-4 max-w-7xl mx-auto relative z-10">
 
         <!-- =============================================================
-        SECTION: HOME (Hero)
+        SECTION: HOME (Hero mejorado)
         ============================================================= -->
         <section id="home" class="active">
             <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
@@ -1000,23 +1126,23 @@
                 </div>
             </div>
 
-            <!-- Stats -->
+            <!-- Stats mejorados con animación de conteo -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12">
                 <div class="glass p-4 text-center border-orange-500/10 hover:border-orange-500/30 transition-all">
-                    <p class="text-2xl font-black text-orange-500">12,847</p>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Vulns Detected</p>
+                    <span class="stat-number" data-target="12847">0</span>
+                    <span class="stat-label">Vulns Detected</span>
                 </div>
                 <div class="glass p-4 text-center border-orange-500/10 hover:border-orange-500/30 transition-all">
-                    <p class="text-2xl font-black text-orange-500">3,201</p>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Data Protected</p>
+                    <span class="stat-number" data-target="3201">0</span>
+                    <span class="stat-label">Data Protected</span>
                 </div>
                 <div class="glass p-4 text-center border-orange-500/10 hover:border-orange-500/30 transition-all">
-                    <p class="text-2xl font-black text-orange-500">99.7%</p>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Accuracy</p>
+                    <span class="stat-number" data-target="99.7">0</span>
+                    <span class="stat-label">% Accuracy</span>
                 </div>
                 <div class="glass p-4 text-center border-orange-500/10 hover:border-orange-500/30 transition-all">
-                    <p class="text-2xl font-black text-orange-500">+500</p>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Companies Trust</p>
+                    <span class="stat-number" data-target="500">0</span>
+                    <span class="stat-label">+ Companies Trust</span>
                 </div>
             </div>
 
@@ -1034,7 +1160,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: SCANNER
+        SECTION: SCANNER (mejorado)
         ============================================================= -->
         <section id="scanner">
             <div class="glass p-6 sm:p-8 max-w-4xl mx-auto border-orange-500/20">
@@ -1093,7 +1219,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: FEATURES
+        SECTION: FEATURES (mejorado)
         ============================================================= -->
         <section id="features">
             <div class="text-center mb-12">
@@ -1158,7 +1284,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: CRYPTO PAYMENTS
+        SECTION: CRYPTO PAYMENTS (mejorado)
         ============================================================= -->
         <section id="crypto">
             <div class="text-center mb-10">
@@ -1173,10 +1299,10 @@
                     <h4 class="font-bold text-lg">Ethereum</h4>
                     <p class="text-[10px] text-gray-500 mb-2">ERC-20</p>
                     <div class="crypto-address text-xs" id="ethAddress" onclick="copiarDireccion('ethAddress')">
-                        0x4d35Fb2028eD6b2723aE8ec9648e036c68bCe0A5
+                        <i class="fa-regular fa-copy"></i> 0x4d35...Ce0A5
                     </div>
                     <button onclick="copiarDireccion('ethAddress')" class="text-[9px] text-orange-400 hover:text-orange-300 mt-2 font-bold flex items-center gap-1 justify-center">
-                        <i class="fa-regular fa-copy"></i> Copy
+                        <i class="fa-regular fa-copy"></i> Copy full
                     </button>
                     <div class="mt-2 text-[8px] text-gray-600">Ethereum Network</div>
                 </div>
@@ -1187,10 +1313,10 @@
                     <h4 class="font-bold text-lg">Bitcoin</h4>
                     <p class="text-[10px] text-gray-500 mb-2">BTC</p>
                     <div class="crypto-address text-xs" id="btcAddress" onclick="copiarDireccion('btcAddress')">
-                        bc1qmm7eg7ukhvvgccqfuazuqp0cvznwt58wk2v0tc
+                        <i class="fa-regular fa-copy"></i> bc1qmm...v0tc
                     </div>
                     <button onclick="copiarDireccion('btcAddress')" class="text-[9px] text-orange-400 hover:text-orange-300 mt-2 font-bold flex items-center gap-1 justify-center">
-                        <i class="fa-regular fa-copy"></i> Copy
+                        <i class="fa-regular fa-copy"></i> Copy full
                     </button>
                     <div class="mt-2 text-[8px] text-gray-600">Bitcoin Network</div>
                 </div>
@@ -1201,10 +1327,10 @@
                     <h4 class="font-bold text-lg">Solana</h4>
                     <p class="text-[10px] text-gray-500 mb-2">SPL</p>
                     <div class="crypto-address text-xs" id="solAddress" onclick="copiarDireccion('solAddress')">
-                        4T74hHA8iBTnM2v5XgZnwrqKdYiQhudU9N1xEVVx1Atv
+                        <i class="fa-regular fa-copy"></i> 4T74h...x1Atv
                     </div>
                     <button onclick="copiarDireccion('solAddress')" class="text-[9px] text-orange-400 hover:text-orange-300 mt-2 font-bold flex items-center gap-1 justify-center">
-                        <i class="fa-regular fa-copy"></i> Copy
+                        <i class="fa-regular fa-copy"></i> Copy full
                     </button>
                     <div class="mt-2 text-[8px] text-gray-600">Solana Network</div>
                 </div>
@@ -1215,10 +1341,10 @@
                     <h4 class="font-bold text-lg">HiperEVM</h4>
                     <p class="text-[10px] text-gray-500 mb-2">EVM</p>
                     <div class="crypto-address text-xs" id="hiperAddress" onclick="copiarDireccion('hiperAddress')">
-                        0x4d35Fb2028eD6b2723aE8ec9648e036c68bCe0A5
+                        <i class="fa-regular fa-copy"></i> 0x4d35...Ce0A5
                     </div>
                     <button onclick="copiarDireccion('hiperAddress')" class="text-[9px] text-orange-400 hover:text-orange-300 mt-2 font-bold flex items-center gap-1 justify-center">
-                        <i class="fa-regular fa-copy"></i> Copy
+                        <i class="fa-regular fa-copy"></i> Copy full
                     </button>
                     <div class="mt-2 text-[8px] text-gray-600">HiperEVM Network</div>
                 </div>
@@ -1233,7 +1359,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: PRICING
+        SECTION: PRICING (mejorado)
         ============================================================= -->
         <section id="pricing">
             <div class="text-center mb-10">
@@ -1259,7 +1385,7 @@
                     </button>
                 </div>
 
-                <!-- Pro (recommended) -->
+                <!-- Pro -->
                 <div class="pricing-item recomendado reveal">
                     <div class="plan-name font-bold text-xl">Pro</div>
                     <div class="plan-price">$49 <small>/mo</small></div>
@@ -1326,7 +1452,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: ABOUT (New)
+        SECTION: ABOUT (mejorado)
         ============================================================= -->
         <section id="about">
             <div class="text-center mb-12">
@@ -1459,7 +1585,7 @@
     </main>
 
     <!-- ================================================================
-    FOOTER (with updated links)
+    FOOTER (mejorado)
     ================================================================ -->
     <footer class="fixed bottom-0 w-full px-4 sm:px-6 py-3 z-50 pointer-events-none">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center pointer-events-auto gap-2">
@@ -1482,11 +1608,11 @@
     </footer>
 
     <!-- ================================================================
-    SCRIPTS (Over 20,000 lines when counting HTML + CSS + JS)
+    SCRIPTS (mejorados con físicas únicas)
     ================================================================ -->
     <script>
         // ================================================================
-        // 1. THREE.JS 4K BACKGROUND (with Bloom)
+        // 1. THREE.JS 4K BACKGROUND CON FÍSICA DE PARTÍCULAS (ÚNICA)
         // ================================================================
         (function() {
             const canvas = document.getElementById('three-bg');
@@ -1503,38 +1629,45 @@
             renderer.toneMapping = THREE.ReinhardToneMapping;
             renderer.toneMappingExposure = 1.2;
 
-            // Post-processing: Bloom
+            // Post-procesado: Bloom
             const composer = new THREE.EffectComposer(renderer);
             const renderPass = new THREE.RenderPass(scene, camera);
             composer.addPass(renderPass);
 
             const bloomPass = new THREE.UnrealBloomPass(
                 new THREE.Vector2(window.innerWidth, window.innerHeight),
-                0.35,  // strength
-                0.25,  // radius
-                0.1    // threshold
+                0.4,  // strength
+                0.3,  // radius
+                0.1   // threshold
             );
             composer.addPass(bloomPass);
 
-            // Particle system (Galaxy)
-            const particleCount = 6000;
+            // ---------- Sistema de partículas con física ----------
+            const particleCount = 8000;
             const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
+            const velocities = [];
             const sizes = new Float32Array(particleCount);
+            const colors = new Float32Array(particleCount * 3);
 
             for (let i = 0; i < particleCount; i++) {
-                const radius = 15 + Math.random() * 50;
+                const radius = 10 + Math.random() * 50;
                 const theta = Math.random() * Math.PI * 2;
                 const phi = Math.acos(2 * Math.random() - 1);
                 positions[i*3] = radius * Math.sin(phi) * Math.cos(theta);
-                positions[i*3+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.5;
+                positions[i*3+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.6;
                 positions[i*3+2] = radius * Math.cos(phi);
 
+                velocities.push({
+                    x: (Math.random() - 0.5) * 0.008,
+                    y: (Math.random() - 0.5) * 0.008,
+                    z: (Math.random() - 0.5) * 0.008
+                });
+
+                sizes[i] = 0.06 + Math.random() * 0.3;
                 const mix = Math.random();
                 colors[i*3] = 1.0;
-                colors[i*3+1] = 0.4 + mix * 0.5;
-                colors[i*3+2] = 0.1 + mix * 0.3;
-                sizes[i] = 0.06 + Math.random() * 0.25;
+                colors[i*3+1] = 0.3 + mix * 0.6;
+                colors[i*3+2] = 0.1 + mix * 0.4;
             }
 
             const geo = new THREE.BufferGeometry();
@@ -1546,7 +1679,7 @@
                 size: 0.2,
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.85,
+                opacity: 0.9,
                 blending: THREE.AdditiveBlending,
                 sizeAttenuation: true,
                 depthWrite: false,
@@ -1555,35 +1688,35 @@
             const particles = new THREE.Points(geo, mat);
             scene.add(particles);
 
-            // Central core
+            // ---------- Núcleo central con anillos ----------
             const coreGroup = new THREE.Group();
             scene.add(coreGroup);
 
-            const coreGeo = new THREE.SphereGeometry(2.8, 48, 48);
+            const coreGeo = new THREE.SphereGeometry(3.0, 48, 48);
             const coreMat = new THREE.MeshBasicMaterial({
                 color: 0xf97316,
                 transparent: true,
-                opacity: 0.15,
+                opacity: 0.12,
                 wireframe: true
             });
             const coreMesh = new THREE.Mesh(coreGeo, coreMat);
             coreGroup.add(coreMesh);
 
-            const innerGlowGeo = new THREE.SphereGeometry(1.8, 32, 32);
+            const innerGlowGeo = new THREE.SphereGeometry(2.0, 32, 32);
             const innerGlowMat = new THREE.MeshBasicMaterial({
                 color: 0xf97316,
                 transparent: true,
-                opacity: 0.08
+                opacity: 0.06
             });
             const innerGlow = new THREE.Mesh(innerGlowGeo, innerGlowMat);
             coreGroup.add(innerGlow);
 
-            // Rings
-            const ringGeo = new THREE.TorusGeometry(5.5, 0.04, 16, 140);
+            // Anillos
+            const ringGeo = new THREE.TorusGeometry(6.0, 0.04, 16, 160);
             const ringMat = new THREE.MeshBasicMaterial({
                 color: 0xf97316,
                 transparent: true,
-                opacity: 0.12
+                opacity: 0.10
             });
             const ring1 = new THREE.Mesh(ringGeo, ringMat);
             ring1.rotation.x = Math.PI / 2;
@@ -1594,21 +1727,21 @@
             ring2.rotation.z = Math.PI / 4;
             coreGroup.add(ring2);
 
-            // Sparks
-            const sparkCount = 400;
+            // Partículas pequeñas alrededor del núcleo
+            const sparkCount = 600;
             const sparkPos = new Float32Array(sparkCount * 3);
             for (let i = 0; i < sparkCount; i++) {
                 const angle = Math.random() * Math.PI * 2;
-                const rad = 4 + Math.random() * 3;
+                const rad = 4 + Math.random() * 4;
                 sparkPos[i*3] = Math.cos(angle) * rad;
-                sparkPos[i*3+1] = (Math.random() - 0.5) * 1.5;
+                sparkPos[i*3+1] = (Math.random() - 0.5) * 2.0;
                 sparkPos[i*3+2] = Math.sin(angle) * rad;
             }
             const sparkGeo = new THREE.BufferGeometry();
             sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
             const sparkMat = new THREE.PointsMaterial({
                 color: 0xf97316,
-                size: 0.08,
+                size: 0.1,
                 transparent: true,
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
@@ -1616,26 +1749,63 @@
             const sparks = new THREE.Points(sparkGeo, sparkMat);
             coreGroup.add(sparks);
 
-            camera.position.z = 28;
+            camera.position.z = 30;
 
             let time = 0;
+            const posAttr = particles.geometry.attributes.position;
+            const posArray = posAttr.array;
 
             function animateBg() {
                 requestAnimationFrame(animateBg);
                 time += 0.002;
 
-                particles.rotation.y += 0.00025;
-                particles.rotation.x += 0.00008;
-                coreGroup.rotation.y += 0.0012;
-                coreGroup.rotation.x += 0.0004;
-                sparks.rotation.y += 0.002;
-                sparks.rotation.x += 0.0005;
+                // Física de partículas: movimiento suave con gravedad y atracción al centro
+                const center = new THREE.Vector3(0, 0, 0);
+                for (let i = 0; i < particleCount; i++) {
+                    const idx = i * 3;
+                    const x = posArray[idx];
+                    const y = posArray[idx+1];
+                    const z = posArray[idx+2];
 
-                const pulse = 0.85 + 0.15 * Math.sin(time * 1.8);
-                mat.opacity = pulse * 0.8;
-                coreMat.opacity = 0.10 + 0.08 * Math.sin(time * 2.2);
-                innerGlowMat.opacity = 0.05 + 0.04 * Math.sin(time * 2.5 + 1.0);
-                ringMat.opacity = 0.08 + 0.06 * Math.sin(time * 1.2);
+                    // Atracción hacia el centro (fuerza gravitacional)
+                    const dx = -x * 0.00008;
+                    const dy = -y * 0.00008;
+                    const dz = -z * 0.00008;
+
+                    velocities[i].x += dx + (Math.random() - 0.5) * 0.0004;
+                    velocities[i].y += dy + (Math.random() - 0.5) * 0.0004;
+                    velocities[i].z += dz + (Math.random() - 0.5) * 0.0004;
+
+                    // Límite de velocidad
+                    const maxSpeed = 0.025;
+                    ['x','y','z'].forEach(axis => {
+                        if (Math.abs(velocities[i][axis]) > maxSpeed) {
+                            velocities[i][axis] = Math.sign(velocities[i][axis]) * maxSpeed;
+                        }
+                    });
+
+                    posArray[idx] += velocities[i].x;
+                    posArray[idx+1] += velocities[i].y;
+                    posArray[idx+2] += velocities[i].z;
+                }
+                posAttr.needsUpdate = true;
+
+                // Rotación de la nube
+                particles.rotation.y += 0.0002;
+                particles.rotation.x += 0.00006;
+
+                // Rotación del núcleo
+                coreGroup.rotation.y += 0.0014;
+                coreGroup.rotation.x += 0.0005;
+                sparks.rotation.y += 0.002;
+                sparks.rotation.x += 0.0006;
+
+                // Pulsos
+                const pulse = 0.85 + 0.15 * Math.sin(time * 1.6);
+                mat.opacity = pulse * 0.85;
+                coreMat.opacity = 0.10 + 0.08 * Math.sin(time * 2.0);
+                innerGlowMat.opacity = 0.05 + 0.04 * Math.sin(time * 2.3 + 0.8);
+                ringMat.opacity = 0.08 + 0.06 * Math.sin(time * 1.3);
 
                 composer.render();
             }
@@ -1650,17 +1820,20 @@
                 composer.setSize(width, height);
             });
 
+            // Interacción con mouse (efecto de empuje)
             let mouseX = 0, mouseY = 0;
             window.addEventListener('mousemove', (e) => {
                 mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
                 mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-                particles.rotation.y += (mouseX * 0.008 - particles.rotation.y) * 0.005;
-                particles.rotation.x += (-mouseY * 0.008 - particles.rotation.x) * 0.005;
+                // Aplicar fuerza a las partículas cercanas al mouse (simulado)
+                // No se puede hacer fácilmente con BufferGeometry, pero rotamos la nube suavemente
+                particles.rotation.y += (mouseX * 0.002 - particles.rotation.y) * 0.005;
+                particles.rotation.x += (-mouseY * 0.002 - particles.rotation.x) * 0.005;
             });
         })();
 
         // ================================================================
-        // 2. TOAST SYSTEM
+        // 2. TOAST SYSTEM (mejorado)
         // ================================================================
         function showToast(title, message, type = 'info') {
             const container = document.getElementById('custom-toast-container');
@@ -1677,14 +1850,16 @@
                 </div>
             `;
             container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0';
-                toast.style.transform = 'translateX(30px)';
-                setTimeout(() => toast.remove(), 400); }, 4000);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(40px) scale(0.9)';
+                setTimeout(() => toast.remove(), 500);
+            }, 4500);
         }
         window.showToast = showToast;
 
         // ================================================================
-        // 3. NAVIGATION
+        // 3. NAVEGACIÓN
         // ================================================================
         function showSection(id) {
             document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -1741,11 +1916,12 @@
         window.connectWallet = connectWallet;
 
         // ================================================================
-        // 5. COPY CRYPTO ADDRESS
+        // 5. COPY CRYPTO ADDRESS (mejorado)
         // ================================================================
         function copiarDireccion(id) {
             const el = document.getElementById(id);
-            const text = el.textContent.trim();
+            const text = el.textContent.trim().replace('Copy full', '').trim();
+            if (!text) return;
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(() => {
                     showToast('✅ Address Copied', text.slice(0, 14) + '...', 'success');
@@ -1767,7 +1943,7 @@
         }
 
         // ================================================================
-        // 6. PAYMENT MODAL
+        // 6. PAYMENT MODAL (mejorado)
         // ================================================================
         function openPaymentModal(planName, planPrice) {
             document.getElementById('modalPlanName').textContent = planName;
@@ -1848,7 +2024,7 @@
         });
 
         // ================================================================
-        // 7. SECURITY SCANNER (REALISTIC SIMULATION)
+        // 7. SECURITY SCANNER (mejorado)
         // ================================================================
         const LIMITE_DIARIO = 1;
         const VULN_MOSTRADAS = 3;
@@ -1857,26 +2033,26 @@
         const vulnerabilidadesReales = [
             { nombre: 'SQL Injection', descripcion: 'Query parameters vulnerable to SQL injection.', criticidad: 'Alta' },
             { nombre: 'Cross-Site Scripting (XSS)', descripcion: 'Reflected in search parameters without sanitization.',
-            criticidad: 'Alta' },
+                criticidad: 'Alta' },
             { nombre: 'Insecure HTTP Headers', descripcion: 'Missing X-Content-Type-Options, risk of MIME sniffing.',
-            criticidad: 'Media' },
+                criticidad: 'Media' },
             { nombre: 'Directory Exposure', descripcion: '/backup/ directory publicly accessible.', criticidad: 'Media' },
             { nombre: 'Cookies without Secure flag', descripcion: 'Session cookies missing Secure flag.', criticidad: 'Alta' },
             { nombre: 'Server version exposed', descripcion: 'Server reveals version in headers.', criticidad: 'Baja' },
             { nombre: 'CORS Misconfiguration', descripcion: 'Allows requests from any origin (*).', criticidad: 'Media' },
             { nombre: 'CSRF Protection Missing', descripcion: 'No CSRF token in critical forms.', criticidad: 'Media' },
             { nombre: 'Mixed Content (HTTP/HTTPS)', descripcion: 'Resources loaded over HTTP on HTTPS page.',
-            criticidad: 'Baja' },
+                criticidad: 'Baja' },
             { nombre: 'Vulnerable Subdomain', descripcion: 'Old subdomain with exposed services.', criticidad: 'Alta' },
             { nombre: 'Missing CSP', descripcion: 'No Content-Security-Policy defined.', criticidad: 'Media' },
             { nombre: 'Weak Authentication', descripcion: 'Allows multiple login attempts without lockout.',
-            criticidad: 'Alta' },
+                criticidad: 'Alta' },
             { nombre: '.env file exposed', descripcion: 'Environment file accessible, risk of credential leak.',
-            criticidad: 'Alta' },
+                criticidad: 'Alta' },
             { nombre: 'Missing HTTPS', descripcion: 'Website does not enforce secure connection.', criticidad: 'Alta' },
             { nombre: 'Outdated Plugin', descripcion: 'Plugin with known critical vulnerability.', criticidad: 'Alta' },
             { nombre: '.git directory exposed', descripcion: 'Git repository accessible, risk of source code leak.',
-            criticidad: 'Alta' },
+                criticidad: 'Alta' },
         ];
 
         function generarDatosFiltrados(url) {
@@ -2007,7 +2183,7 @@
                 line.className = `log-line ${tipo === 'done' ? 'done' : tipo === 'error' ? 'error' : ''}`;
                 const time = new Date().toLocaleTimeString();
                 const icon = tipo === 'done' ? 'fa-check-circle' : tipo === 'error' ? 'fa-exclamation-circle' :
-                'fa-circle';
+                    'fa-circle';
                 line.innerHTML =
                     `<span class="time">[${time}]</span><span class="msg"><i class="fas ${icon}"></i> ${msg}</span>`;
                 logsDiv.appendChild(line);
@@ -2020,7 +2196,7 @@
                     const pct = ((step + 1) / pasos.length) * 100;
                     progressFill.style.width = pct + '%';
                     step++;
-                    setTimeout(avanzar, 350 + Math.random() * 500);
+                    setTimeout(avanzar, 400 + Math.random() * 500);
                 } else {
                     agregarLog('✅ Scan completed successfully.', 'done');
                     progressFill.style.width = '100%';
@@ -2107,7 +2283,7 @@
         });
 
         // ================================================================
-        // 8. INTERSECTION OBSERVER (Reveal animations)
+        // 8. INTERSECTION OBSERVER (Reveal mejorado)
         // ================================================================
         function initRevealObserver() {
             const reveals = document.querySelectorAll('.reveal');
@@ -2117,13 +2293,13 @@
                         entry.target.classList.add('visible');
                     }
                 });
-            }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+            }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
             reveals.forEach(el => observer.observe(el));
         }
         setTimeout(initRevealObserver, 300);
 
         // ================================================================
-        // 9. LIVE VIEWERS COUNTER
+        // 9. LIVE VIEWERS COUNTER (con animación)
         // ================================================================
         setInterval(() => {
             const num = Math.floor(14000 + Math.random() * 1500);
@@ -2131,12 +2307,12 @@
         }, 1500);
 
         // ================================================================
-        // 10. THEME TOGGLE (Functional)
+        // 10. THEME TOGGLE (mejorado)
         // ================================================================
         let darkMode = true;
         function toggleTheme() {
             darkMode = !darkMode;
-            document.body.style.backgroundColor = darkMode ? '#050508' : '#f0f0f5';
+            document.body.style.backgroundColor = darkMode ? '#05050a' : '#f0f0f5';
             document.body.style.color = darkMode ? '#ffffff' : '#111111';
             showToast('🌓 Theme switched', darkMode ? 'Dark mode activated' : 'Light mode activated', 'info');
         }
@@ -2152,12 +2328,37 @@
             setTimeout(() => {
                 showToast('🎁 Free Trial Available', 'Start your 1-day free trial now! No credit card required.', 'info');
             }, 2000);
+
+            // Animar estadísticas
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(el => {
+                const target = parseFloat(el.dataset.target);
+                if (isNaN(target)) return;
+                const duration = 2000;
+                const startTime = performance.now();
+                const startVal = 0;
+                const isFloat = target % 1 !== 0;
+                function updateStat(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    let progress = Math.min(elapsed / duration, 1);
+                    // Curva de easing (cubic-bezier(0.34,1.56,0.64,1))
+                    const eased = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                    const currentVal = startVal + (target - startVal) * eased;
+                    el.textContent = isFloat ? currentVal.toFixed(1) : Math.floor(currentVal);
+                    if (progress < 1) {
+                        requestAnimationFrame(updateStat);
+                    } else {
+                        el.textContent = isFloat ? target.toFixed(1) : target;
+                    }
+                }
+                requestAnimationFrame(updateStat);
+            });
         });
 
         // ================================================================
-        // 12. CONSOLE WELCOME
+        // 12. CONSOLE WELCOME (mejorado)
         // ================================================================
-        console.log('🔶 GENOVEX ORACLE v50 - Professional Security Suite');
+        console.log('🔶 GENOVEX ORACLE v50 — Professional Security Suite');
         console.log('📌 Plans from $19/mo · Pay with ETH, BTC, SOL or HiperEVM');
         console.log('🦊 Connect Phantom Wallet for full experience.');
         console.log('💳 Secure payments with card or crypto.');
@@ -2166,9 +2367,10 @@
         console.log('🌐 Telegram: https://t.me/GENOVEXCOINofficial');
         console.log('🚀 Pump.fun: https://pump.fun/coin/EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump');
         console.log('✨ Total lines of code: > 20,000');
+        console.log('💚 Física de partículas única con gravedad y atracción central.');
 
         // ================================================================
-        // 13. RIPPLE EFFECT ON BUTTONS
+        // 13. RIPPLE EFFECT ON BUTTONS (mejorado)
         // ================================================================
         document.querySelectorAll('.btn-primary').forEach(btn => {
             btn.addEventListener('click', function(e) {
@@ -2176,10 +2378,11 @@
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 const ripple = document.createElement('span');
+                const size = 120;
                 ripple.style.cssText =
-                    `position:absolute; border-radius:50%; background:rgba(255,255,255,0.2); width:100px; height:100px; left:${x-50}px; top:${y-50}px; pointer-events:none; transform:scale(0); animation:rippleAnim 0.6s ease-out forwards;`;
+                    `position:absolute; border-radius:50%; background:rgba(255,255,255,0.2); width:${size}px; height:${size}px; left:${x-size/2}px; top:${y-size/2}px; pointer-events:none; transform:scale(0); animation:rippleAnim 0.7s ease-out forwards;`;
                 this.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 700);
+                setTimeout(() => ripple.remove(), 800);
             });
         });
         const styleSheet = document.createElement('style');
@@ -2187,7 +2390,27 @@
         document.head.appendChild(styleSheet);
 
         // ================================================================
-        // 14. ADDITIONAL: SIMULATED BACKGROUND CHECK (no-op)
+        // 14. EFECTO DE INCLINACIÓN 3D EN TARJETAS (física)
+        // ================================================================
+        document.querySelectorAll('.feature-card, .pricing-item, .vuln-item').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                this.style.transform =
+                `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.01)`;
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+            });
+        });
+
+        // ================================================================
+        // 15. SIMULACIÓN DE CONEXIÓN EN VIVO (opcional)
         // ================================================================
         console.log('✅ All systems operational.');
         console.log('💚 Genovex security suite running smoothly.');
