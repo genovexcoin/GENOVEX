@@ -1,23 +1,29 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GENOVEX · Oracle v50 — Ultimate Security Suite</title>
 
     <!-- ================================================================
     EXTERNAL LIBRARIES
     ================================================================ -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Three.js Post-processing (Bloom + UnrealBloomPass) -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js">
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet" />
@@ -30,21 +36,25 @@
             --primary: #f97316;
             --primary-dark: #ea580c;
             --primary-light: #fb923c;
-            --primary-glow: rgba(249,115,22,0.35);
+            --primary-glow: rgba(249, 115, 22, 0.35);
             --bg-deep: #05050a;
-            --bg-card: rgba(8,8,18,0.82);
-            --border-glow: rgba(249,115,22,0.12);
+            --bg-card: rgba(8, 8, 18, 0.82);
+            --border-glow: rgba(249, 115, 22, 0.12);
             --text-primary: #ffffff;
             --text-secondary: #b8b8c0;
             --text-muted: #6b6b7a;
             --radius-xl: 28px;
             --radius-lg: 18px;
-            --shadow-xl: 0 40px 100px rgba(0,0,0,0.8);
-            --transition-smooth: 0.5s cubic-bezier(0.16,1,0.3,1);
-            --transition-spring: 0.6s cubic-bezier(0.34,1.56,0.64,1);
+            --shadow-xl: 0 40px 100px rgba(0, 0, 0, 0.8);
+            --transition-smooth: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-spring: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -57,7 +67,7 @@
         }
 
         /* ================================================================
-           THREE.JS BACKGROUND (Física + Partículas)
+           THREE.JS BACKGROUND
            ================================================================ */
         #three-bg {
             position: fixed;
@@ -71,7 +81,7 @@
         }
 
         /* ================================================================
-           GLASS MORPHISM (mejorado con efecto de borde dinámico)
+           GLASS MORPHISM
            ================================================================ */
         .glass {
             background: var(--bg-card);
@@ -80,7 +90,7 @@
             border: 1px solid var(--border-glow);
             border-radius: var(--radius-lg);
             transition: all var(--transition-smooth);
-            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
         }
@@ -88,17 +98,17 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(249,115,22,0.03), transparent 70%);
+            background: radial-gradient(circle at 30% 20%, rgba(249, 115, 22, 0.03), transparent 70%);
             pointer-events: none;
         }
         .glass:hover {
             border-color: var(--primary);
-            box-shadow: 0 12px 60px rgba(249,115,22,0.06), inset 0 0 80px rgba(249,115,22,0.02);
+            box-shadow: 0 12px 60px rgba(249, 115, 22, 0.06), inset 0 0 80px rgba(249, 115, 22, 0.02);
             transform: translateY(-3px);
         }
 
         /* ================================================================
-           BOTONES (con efecto de luz física)
+           BUTTONS
            ================================================================ */
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -114,7 +124,7 @@
             border: none;
             font-size: 15px;
             letter-spacing: 0.02em;
-            box-shadow: 0 6px 30px rgba(249,115,22,0.3);
+            box-shadow: 0 6px 30px rgba(249, 115, 22, 0.3);
             position: relative;
             overflow: hidden;
             will-change: transform;
@@ -123,17 +133,21 @@
             content: '';
             position: absolute;
             inset: -50%;
-            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.25), transparent 70%);
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.25), transparent 70%);
             opacity: 0;
             transition: opacity 0.4s;
             pointer-events: none;
         }
-        .btn-primary:hover::after { opacity: 1; }
+        .btn-primary:hover::after {
+            opacity: 1;
+        }
         .btn-primary:hover {
             transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 50px rgba(249,115,22,0.5);
+            box-shadow: 0 12px 50px rgba(249, 115, 22, 0.5);
         }
-        .btn-primary:active { transform: scale(0.96); }
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
 
         .btn-outline {
             background: transparent;
@@ -152,16 +166,16 @@
             overflow: hidden;
         }
         .btn-outline:hover {
-            background: rgba(249,115,22,0.08);
+            background: rgba(249, 115, 22, 0.08);
             transform: translateY(-3px);
-            box-shadow: 0 0 40px rgba(249,115,22,0.12);
+            box-shadow: 0 0 40px rgba(249, 115, 22, 0.12);
             border-color: var(--primary-light);
         }
 
         .btn-dark {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             padding: 12px 26px;
             border-radius: 60px;
             transition: all var(--transition-spring);
@@ -171,7 +185,7 @@
             backdrop-filter: blur(8px);
         }
         .btn-dark:hover {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             border-color: var(--primary);
             transform: translateY(-2px);
         }
@@ -180,9 +194,14 @@
             padding: 8px 20px;
             font-size: 11px;
         }
+        .btn-xs {
+            padding: 4px 12px;
+            font-size: 9px;
+            border-radius: 40px;
+        }
 
         /* ================================================================
-           NAVEGACIÓN (sticky glass con animación de entrada)
+           NAVIGATION
            ================================================================ */
         .nav-link {
             transition: all var(--transition-smooth);
@@ -195,7 +214,10 @@
             letter-spacing: 0.1em;
             padding: 6px 0;
         }
-        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+        }
         .nav-link.active::after {
             content: '';
             position: absolute;
@@ -205,38 +227,58 @@
             height: 2px;
             background: var(--primary);
             border-radius: 4px;
-            animation: slideUnderline 0.5s cubic-bezier(0.16,1,0.3,1);
+            animation: slideUnderline 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 0 20px var(--primary-glow);
         }
         @keyframes slideUnderline {
-            from { transform: scaleX(0); }
-            to { transform: scaleX(1); }
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
         }
 
         /* ================================================================
-           SECCIONES (transición con física de rebote)
+           SECTIONS
            ================================================================ */
         section {
             display: none;
-            animation: fadeUpSpring 0.9s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            animation: fadeUpSpring 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-        section.active { display: block; }
-
+        section.active {
+            display: block;
+        }
         @keyframes fadeUpSpring {
-            0% { opacity: 0; transform: translateY(60px) scale(0.96); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+            0% {
+                opacity: 0;
+                transform: translateY(60px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         /* ================================================================
-           SCROLLBAR (custom)
+           SCROLLBAR
            ================================================================ */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-deep); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 20px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-deep);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 20px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
 
         /* ================================================================
-           SCANNER LOGS (terminal con efecto de escritura)
+           SCANNER LOGS
            ================================================================ */
         .scan-logs {
             font-family: 'JetBrains Mono', monospace;
@@ -246,33 +288,64 @@
             overflow-y: auto;
             padding-right: 8px;
             line-height: 2;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 12px;
             padding: 12px 16px;
-            border: 1px solid rgba(249,115,22,0.04);
+            border: 1px solid rgba(249, 115, 22, 0.04);
         }
-        .scan-logs::-webkit-scrollbar { width: 3px; }
-        .scan-logs::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-
+        .scan-logs::-webkit-scrollbar {
+            width: 3px;
+        }
+        .scan-logs::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
         .scan-logs .log-line {
             padding: 2px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             display: flex;
             gap: 14px;
             align-items: baseline;
             animation: logSlide 0.4s ease;
         }
         @keyframes logSlide {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
-        .scan-logs .log-line .time { color: #6a5a4a; min-width: 80px; font-size: 10px; letter-spacing: 0.3px; }
-        .scan-logs .log-line .msg { color: #d0c0b0; flex: 1; }
-        .scan-logs .log-line .msg i { color: var(--primary); margin-right: 10px; width: 18px; text-align: center; }
-        .scan-logs .log-line.done .msg { color: #66bb6a; }
-        .scan-logs .log-line.done .msg i { color: #66bb6a; }
-        .scan-logs .log-line.error .msg { color: #ef5350; }
-        .scan-logs .log-line.error .msg i { color: #ef5350; }
+        .scan-logs .log-line .time {
+            color: #6a5a4a;
+            min-width: 80px;
+            font-size: 10px;
+            letter-spacing: 0.3px;
+        }
+        .scan-logs .log-line .msg {
+            color: #d0c0b0;
+            flex: 1;
+        }
+        .scan-logs .log-line .msg i {
+            color: var(--primary);
+            margin-right: 10px;
+            width: 18px;
+            text-align: center;
+        }
+        .scan-logs .log-line.done .msg {
+            color: #66bb6a;
+        }
+        .scan-logs .log-line.done .msg i {
+            color: #66bb6a;
+        }
+        .scan-logs .log-line.error .msg {
+            color: #ef5350;
+        }
+        .scan-logs .log-line.error .msg i {
+            color: #ef5350;
+        }
 
         .scan-progress-bar {
             width: 100%;
@@ -288,7 +361,7 @@
             width: 0%;
             background: linear-gradient(90deg, var(--primary), var(--primary-dark), var(--primary-light));
             border-radius: 20px;
-            transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
         }
         .scan-progress-fill::after {
@@ -298,17 +371,22 @@
             top: 0;
             width: 20px;
             height: 100%;
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             filter: blur(6px);
             animation: progressGlow 1.2s ease-in-out infinite;
         }
         @keyframes progressGlow {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.8; }
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.8;
+            }
         }
 
         /* ================================================================
-           VULNERABILIDADES (cards con efecto de inclinación 3D)
+           VULNERABILITIES
            ================================================================ */
         .vuln-item {
             background: var(--bg-deep);
@@ -321,7 +399,7 @@
             flex-wrap: wrap;
             gap: 12px;
             transition: all var(--transition-spring);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             will-change: transform;
         }
         .vuln-item:hover {
@@ -329,8 +407,18 @@
             transform: translateX(8px) scale(1.01);
             border-left-color: var(--primary-light);
         }
-        .vuln-item .desc { font-weight: 700; font-size: 14px; flex: 1; min-width: 130px; }
-        .vuln-item .detalle { font-size: 13px; color: var(--text-secondary); flex: 2; min-width: 170px; }
+        .vuln-item .desc {
+            font-weight: 700;
+            font-size: 14px;
+            flex: 1;
+            min-width: 130px;
+        }
+        .vuln-item .detalle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            flex: 2;
+            min-width: 170px;
+        }
         .vuln-item .criticidad {
             font-size: 10px;
             font-weight: 800;
@@ -339,27 +427,59 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             white-space: nowrap;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
         }
-        .criticidad.alta { background: #d84315; color: #fff; }
-        .criticidad.media { background: #f57c00; color: #fff; }
-        .criticidad.baja { background: #ffb300; color: #1a120e; }
+        .criticidad.alta {
+            background: #d84315;
+            color: #fff;
+        }
+        .criticidad.media {
+            background: #f57c00;
+            color: #fff;
+        }
+        .criticidad.baja {
+            background: #ffb300;
+            color: #1a120e;
+        }
+
+        .vuln-solucion {
+            font-size: 12px;
+            color: #66bb6a;
+            background: rgba(102, 187, 106, 0.08);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border-left: 3px solid #66bb6a;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .vuln-solucion i {
+            color: #66bb6a;
+            margin-right: 8px;
+        }
 
         /* ================================================================
-           DATA ITEMS (con efecto de brillo)
+           DATA ITEMS
            ================================================================ */
         .data-item {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             font-size: 14px;
             flex-wrap: wrap;
             gap: 6px;
             transition: background 0.3s;
         }
-        .data-item:hover { background: rgba(249,115,22,0.02); border-radius: 8px; padding-left: 8px; padding-right: 8px; }
-        .data-item .label { color: var(--text-muted); font-weight: 500; }
+        .data-item:hover {
+            background: rgba(249, 115, 22, 0.02);
+            border-radius: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+        .data-item .label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
         .data-item .value {
             color: var(--text-primary);
             font-weight: 600;
@@ -371,16 +491,28 @@
             align-items: center;
             gap: 8px;
             font-size: 13px;
-            border: 1px solid rgba(249,115,22,0.04);
+            border: 1px solid rgba(249, 115, 22, 0.04);
         }
-        .data-item .value i { color: var(--primary); font-size: 12px; }
+        .data-item .value i {
+            color: var(--primary);
+            font-size: 12px;
+        }
+        .data-item .value.blurred {
+            filter: blur(6px);
+            user-select: none;
+            background: #1a1210;
+            color: #5a4a40;
+        }
+        .data-item .value.blurred:hover {
+            filter: blur(2px);
+        }
 
         /* ================================================================
-           BLOQUEADO (con efecto de brillo pulsante)
+           BLOQUEADO / PREMIUM LOCK
            ================================================================ */
         .bloqueado {
-            background: rgba(249,115,22,0.02);
-            border: 1px dashed rgba(249,115,22,0.1);
+            background: rgba(249, 115, 22, 0.02);
+            border: 1px dashed rgba(249, 115, 22, 0.1);
             padding: 28px 24px;
             border-radius: 20px;
             text-align: center;
@@ -392,19 +524,40 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(249,115,22,0.04), transparent 70%);
+            background: radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.04), transparent 70%);
             pointer-events: none;
         }
-        .bloqueado i { font-size: 40px; color: var(--primary); margin-bottom: 12px; display: inline-block; animation: pulseIcon 2.5s ease-in-out infinite; }
-        @keyframes pulseIcon {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; }
+        .bloqueado i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: inline-block;
+            animation: pulseIcon 2.5s ease-in-out infinite;
         }
-        .bloqueado h4 { font-size: 20px; margin-bottom: 6px; }
-        .bloqueado p { color: var(--text-secondary); font-size: 14px; max-width: 480px; margin: 0 auto 20px; }
+        @keyframes pulseIcon {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+        .bloqueado h4 {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+        .bloqueado p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            max-width: 480px;
+            margin: 0 auto 20px;
+        }
 
         /* ================================================================
-           CRYPTO ADDRESS (con efecto de resplandor al hover)
+           CRYPTO ADDRESS
            ================================================================ */
         .crypto-address {
             font-family: 'JetBrains Mono', monospace;
@@ -413,7 +566,7 @@
             padding: 12px 16px;
             border-radius: 12px;
             word-break: break-all;
-            border: 1px solid rgba(249,115,22,0.06);
+            border: 1px solid rgba(249, 115, 22, 0.06);
             color: var(--text-secondary);
             cursor: pointer;
             transition: all var(--transition-smooth);
@@ -426,41 +579,44 @@
             background: #1a1410;
             border-color: var(--primary);
             color: #fff;
-            box-shadow: 0 0 30px rgba(249,115,22,0.06);
+            box-shadow: 0 0 30px rgba(249, 115, 22, 0.06);
         }
-        .crypto-address i { color: var(--primary); font-size: 14px; }
+        .crypto-address i {
+            color: var(--primary);
+            font-size: 14px;
+        }
 
         /* ================================================================
-           PRICING CARDS (con efecto de elevación y brillo)
+           PRICING CARDS
            ================================================================ */
         .pricing-item {
             background: var(--bg-deep);
             padding: 36px 30px;
             border-radius: var(--radius-xl);
-            border: 1px solid rgba(249,115,22,0.04);
+            border: 1px solid rgba(249, 115, 22, 0.04);
             transition: all var(--transition-spring);
             text-align: center;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         }
         .pricing-item::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 10%, rgba(249,115,22,0.03), transparent 70%);
+            background: radial-gradient(circle at 50% 10%, rgba(249, 115, 22, 0.03), transparent 70%);
             pointer-events: none;
         }
         .pricing-item:hover {
             border-color: var(--primary);
             transform: translateY(-12px) scale(1.01);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
         }
         .pricing-item.recomendado {
             border-color: var(--primary);
-            background: rgba(249,115,22,0.02);
+            background: rgba(249, 115, 22, 0.02);
         }
         .pricing-item.recomendado::after {
             content: '★ RECOMMENDED';
@@ -483,27 +639,82 @@
             margin: 12px 0 6px;
             letter-spacing: -0.02em;
         }
-        .pricing-item .plan-price small { font-size: 16px; font-weight: 400; color: var(--text-secondary); }
-        .pricing-item ul { text-align: left; padding: 0; list-style: none; margin-bottom: 28px; flex: 1; }
+        .pricing-item .plan-price small {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+        .pricing-item ul {
+            text-align: left;
+            padding: 0;
+            list-style: none;
+            margin-bottom: 28px;
+            flex: 1;
+        }
         .pricing-item ul li {
             padding: 10px 0;
             font-size: 14px;
             display: flex;
             align-items: center;
             gap: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
         }
-        .pricing-item ul li i { color: var(--primary); width: 20px; text-align: center; }
-        .pricing-item ul li .fa-times { color: #5a4a40; }
+        .pricing-item ul li i {
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+        .pricing-item ul li .fa-times {
+            color: #5a4a40;
+        }
 
         /* ================================================================
-           MODAL (con animación de escala y desvanecimiento)
+           OFFER COUNTDOWN (URGENCY)
+           ================================================================ */
+        .offer-countdown {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            padding: 14px 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            animation: pulseUrgency 2s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .offer-countdown .timer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+        .offer-countdown .label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.7);
+            display: block;
+            margin-bottom: 4px;
+        }
+        @keyframes pulseUrgency {
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 60px rgba(220, 38, 38, 0.6);
+            }
+        }
+
+        /* ================================================================
+           MODAL
            ================================================================ */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             z-index: 9999;
@@ -512,10 +723,16 @@
             padding: 20px;
             animation: modalFade 0.4s ease;
         }
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active {
+            display: flex;
+        }
         @keyframes modalFade {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
         .modal-box {
             background: var(--bg-deep);
@@ -528,20 +745,43 @@
             overflow-y: auto;
             box-shadow: var(--shadow-xl);
             position: relative;
-            animation: modalSlide 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            animation: modalSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes modalSlide {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
-        .modal-box h2 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-        .modal-box .sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 28px; }
-        .modal-box label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 4px; }
-        .modal-box input, .modal-box select {
+        .modal-box h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .modal-box .sub {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+        .modal-box label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .modal-box input,
+        .modal-box select {
             width: 100%;
             padding: 14px 20px;
             background: var(--bg-deep);
-            border: 1px solid rgba(249,115,22,0.08);
+            border: 1px solid rgba(249, 115, 22, 0.08);
             border-radius: 14px;
             color: #fff;
             font-size: 15px;
@@ -550,12 +790,23 @@
             margin-bottom: 18px;
             font-family: inherit;
         }
-        .modal-box input:focus, .modal-box select:focus {
+        .modal-box input:focus,
+        .modal-box select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(249,115,22,0.04);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.04);
         }
-        .modal-box .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .modal-box .btn-primary { width: 100%; justify-content: center; font-size: 16px; padding: 18px; margin-top: 8px; }
+        .modal-box .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .modal-box .btn-primary {
+            width: 100%;
+            justify-content: center;
+            font-size: 16px;
+            padding: 18px;
+            margin-top: 8px;
+        }
         .modal-box .btn-close {
             background: transparent;
             border: none;
@@ -567,10 +818,44 @@
             right: 22px;
             transition: all var(--transition-smooth);
         }
-        .modal-box .btn-close:hover { color: #fff; transform: rotate(90deg); }
+        .modal-box .btn-close:hover {
+            color: #fff;
+            transform: rotate(90deg);
+        }
+        .modal-box .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .modal-box .social-login button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            background: var(--bg-deep);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .modal-box .social-login button:hover {
+            border-color: var(--primary);
+            background: rgba(249, 115, 22, 0.05);
+        }
+        .modal-box .social-login button.google {
+            color: #ea4335;
+        }
+        .modal-box .social-login button.email {
+            color: var(--primary);
+        }
 
         /* ================================================================
-           TOAST NOTIFICATIONS (con física de resorte)
+           TOAST
            ================================================================ */
         #custom-toast-container {
             position: fixed;
@@ -588,79 +873,139 @@
             padding: 18px 26px;
             border-radius: 18px;
             backdrop-filter: blur(28px);
-            background: rgba(8,8,18,0.94);
-            border: 1px solid rgba(249,115,22,0.12);
+            background: rgba(8, 8, 18, 0.94);
+            border: 1px solid rgba(249, 115, 22, 0.12);
             display: flex;
             align-items: flex-start;
             gap: 16px;
-            animation: toastIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            animation: toastIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
         }
-        .toast-item.success { border-color: #22c55e; }
-        .toast-item.danger { border-color: #ef4444; }
-        .toast-item.info { border-color: var(--primary); }
-
+        .toast-item.success {
+            border-color: #22c55e;
+        }
+        .toast-item.danger {
+            border-color: #ef4444;
+        }
+        .toast-item.info {
+            border-color: var(--primary);
+        }
         @keyframes toastIn {
-            from { opacity: 0; transform: translateX(60px) scale(0.9); }
-            to { opacity: 1; transform: translateX(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateX(60px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
         }
 
         /* ================================================================
-           FEATURE CARDS (con efecto de inclinación 3D)
+           FEATURE CARDS
            ================================================================ */
         .feature-card {
             padding: 32px 26px;
             text-align: center;
             background: var(--bg-deep);
             border-radius: var(--radius-xl);
-            border: 1px solid rgba(249,115,22,0.04);
+            border: 1px solid rgba(249, 115, 22, 0.04);
             transition: all var(--transition-spring);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             will-change: transform;
         }
         .feature-card::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(249,115,22,0.02), transparent 70%);
+            background: radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.02), transparent 70%);
             pointer-events: none;
         }
         .feature-card:hover {
             border-color: var(--primary);
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
         .feature-icon {
             font-size: 44px;
             color: var(--primary);
             margin-bottom: 18px;
             display: inline-block;
-            filter: drop-shadow(0 0 20px rgba(249,115,22,0.1));
+            filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.1));
             transition: transform 0.4s;
         }
-        .feature-card:hover .feature-icon { transform: scale(1.08) rotate(-2deg); }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.08) rotate(-2deg);
+        }
 
         /* ================================================================
-           TESTIMONIALS (con efecto de borde brillante)
+           TESTIMONIALS
            ================================================================ */
         .testimonial-card {
             background: var(--bg-deep);
             padding: 28px;
             border-radius: var(--radius-lg);
-            border: 1px solid rgba(249,115,22,0.04);
+            border: 1px solid rgba(249, 115, 22, 0.04);
             transition: all var(--transition-spring);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         .testimonial-card:hover {
             border-color: var(--primary);
             transform: translateY(-6px);
-            box-shadow: 0 16px 50px rgba(0,0,0,0.4);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
         }
 
         /* ================================================================
-           TIMELINE (con efecto de resplandor)
+           HTML CLONE (PREMIUM)
+           ================================================================ */
+        .html-clone {
+            background: #0a0a12;
+            border: 1px solid rgba(249, 115, 22, 0.1);
+            border-radius: 14px;
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #b8b8c0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 16px;
+            position: relative;
+        }
+        .html-clone::-webkit-scrollbar {
+            width: 4px;
+        }
+        .html-clone::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        .html-clone .premium-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .html-clone .premium-overlay i {
+            font-size: 48px;
+            color: var(--primary);
+        }
+        .html-clone .premium-overlay p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ================================================================
+           TIMELINE
            ================================================================ */
         .timeline-item {
             display: flex;
@@ -671,7 +1016,9 @@
             position: relative;
             transition: all 0.3s;
         }
-        .timeline-item:hover { border-left-color: var(--primary-light); }
+        .timeline-item:hover {
+            border-left-color: var(--primary-light);
+        }
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -684,25 +1031,33 @@
             box-shadow: 0 0 30px var(--primary-glow);
             transition: all 0.3s;
         }
-        .timeline-item:hover::before { transform: scale(1.2); }
-        .timeline-item .step { font-weight: 800; color: var(--primary); min-width: 70px; }
-        .timeline-item .content { color: var(--text-secondary); }
+        .timeline-item:hover::before {
+            transform: scale(1.2);
+        }
+        .timeline-item .step {
+            font-weight: 800;
+            color: var(--primary);
+            min-width: 70px;
+        }
+        .timeline-item .content {
+            color: var(--text-secondary);
+        }
 
         /* ================================================================
-           TEAM MEMBERS (con efecto de elevación)
+           TEAM
            ================================================================ */
         .team-member {
             text-align: center;
             padding: 24px;
             border-radius: var(--radius-lg);
-            border: 1px solid rgba(249,115,22,0.04);
+            border: 1px solid rgba(249, 115, 22, 0.04);
             transition: all var(--transition-spring);
             background: var(--bg-deep);
         }
         .team-member:hover {
             border-color: var(--primary);
             transform: translateY(-8px);
-            box-shadow: 0 16px 50px rgba(0,0,0,0.4);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
         }
         .team-member .avatar {
             width: 88px;
@@ -716,16 +1071,18 @@
             font-size: 34px;
             font-weight: 900;
             color: #000;
-            box-shadow: 0 0 40px rgba(249,115,22,0.15);
+            box-shadow: 0 0 40px rgba(249, 115, 22, 0.15);
             transition: transform 0.4s;
         }
-        .team-member:hover .avatar { transform: scale(1.05) rotate(-2deg); }
+        .team-member:hover .avatar {
+            transform: scale(1.05) rotate(-2deg);
+        }
 
         /* ================================================================
-           FAQ (con transición suave)
+           FAQ
            ================================================================ */
         .faq-item {
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             padding: 18px 0;
         }
         .faq-item .question {
@@ -737,20 +1094,29 @@
             transition: all var(--transition-smooth);
             font-size: 16px;
         }
-        .faq-item .question:hover { color: var(--primary); }
-        .faq-item .question i { transition: transform 0.4s; }
-        .faq-item.open .question i { transform: rotate(180deg); }
+        .faq-item .question:hover {
+            color: var(--primary);
+        }
+        .faq-item .question i {
+            transition: transform 0.4s;
+        }
+        .faq-item.open .question i {
+            transform: rotate(180deg);
+        }
         .faq-item .answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            transition: max-height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             color: var(--text-secondary);
             font-size: 14px;
         }
-        .faq-item.open .answer { max-height: 200px; padding-top: 14px; }
+        .faq-item.open .answer {
+            max-height: 200px;
+            padding-top: 14px;
+        }
 
         /* ================================================================
-           INPUT GROUP (escáner)
+           INPUT GROUP
            ================================================================ */
         .input-group-custom {
             display: flex;
@@ -763,20 +1129,22 @@
             min-width: 280px;
             padding: 18px 28px;
             border-radius: 60px;
-            border: 1px solid rgba(249,115,22,0.08);
+            border: 1px solid rgba(249, 115, 22, 0.08);
             background: var(--bg-deep);
             color: #fff;
             font-size: 16px;
             outline: none;
             transition: all var(--transition-smooth);
             font-family: inherit;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         .input-group-custom input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(249,115,22,0.04), inset 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.04), inset 0 2px 10px rgba(0, 0, 0, 0.3);
         }
-        .input-group-custom input::placeholder { color: #5a4a40; }
+        .input-group-custom input::placeholder {
+            color: #5a4a40;
+        }
 
         /* ================================================================
            BADGES
@@ -790,13 +1158,20 @@
             border-radius: 100px;
             font-size: 15px;
             letter-spacing: 0.02em;
-            box-shadow: 0 0 50px rgba(249,115,22,0.25);
+            box-shadow: 0 0 50px rgba(249, 115, 22, 0.25);
             animation: pulseGlow 3s ease-in-out infinite;
             text-transform: uppercase;
         }
         @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(249,115,22,0.2); }
-            50% { transform: scale(1.05); box-shadow: 0 0 70px rgba(249,115,22,0.4); }
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 40px rgba(249, 115, 22, 0.2);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 70px rgba(249, 115, 22, 0.4);
+            }
         }
 
         .premium-badge {
@@ -819,16 +1194,38 @@
             flex-wrap: wrap;
             margin-top: 18px;
         }
-        .limit-badge i { color: var(--primary); }
-        .limit-badge strong { color: var(--primary); }
+        .limit-badge i {
+            color: var(--primary);
+        }
+        .limit-badge strong {
+            color: var(--primary);
+        }
+
+        .cert-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(249, 115, 22, 0.06);
+            border: 1px solid rgba(249, 115, 22, 0.1);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .cert-badge i {
+            color: var(--primary);
+        }
 
         /* ================================================================
-           REVEAL ANIMATIONS (con física de resorte)
+           REVEAL
            ================================================================ */
         .reveal {
             opacity: 0;
             transform: translateY(40px) scale(0.96);
-            transition: opacity 0.9s cubic-bezier(0.34,1.56,0.64,1), transform 0.9s cubic-bezier(0.34,1.56,0.64,1);
+            transition: opacity 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .reveal.visible {
             opacity: 1;
@@ -844,28 +1241,22 @@
             line-height: 1.05;
             letter-spacing: -0.02em;
         }
-        .section-title span { color: var(--primary); }
+        .section-title span {
+            color: var(--primary);
+        }
 
         .float-slow {
             animation: floatSlow 7s ease-in-out infinite;
         }
         @keyframes floatSlow {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-16px); }
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-16px);
+            }
         }
-
-        .float-fast {
-            animation: floatFast 3.5s ease-in-out infinite;
-        }
-        @keyframes floatFast {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .hover-lift {
-            transition: transform var(--transition-spring);
-        }
-        .hover-lift:hover { transform: translateY(-6px); }
 
         .shimmer {
             position: relative;
@@ -875,52 +1266,23 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
             transform: translateX(-100%);
             animation: shimmer 4s infinite;
         }
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
         }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* ================================================================
-           RESPONSIVE
-           ================================================================ */
-        @media (max-width: 1024px) {
-            .hero-title { font-size: 48px !important; }
-        }
-        @media (max-width: 768px) {
-            .hero-title { font-size: 34px !important; }
-            .nav-desktop { display: none !important; }
-            .mobile-nav { display: flex !important; }
-            .crypto-grid { grid-template-columns: 1fr 1fr !important; }
-            .pricing-grid { grid-template-columns: 1fr !important; }
-            .modal-box { padding: 24px; }
-            .section-title { font-size: 32px; }
-        }
-        @media (min-width: 769px) {
-            .mobile-nav { display: none !important; }
-        }
-        @media (max-width: 480px) {
-            .crypto-grid { grid-template-columns: 1fr !important; }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        /* ================================================================
-           GRID BACKGROUND (más sutil)
-           ================================================================ */
-        .hype-grid {
-            background-image:
-                linear-gradient(rgba(249,115,22,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(249,115,22,0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-
-        /* ================================================================
-           ESTADÍSTICAS ANIMADAS
-           ================================================================ */
         .stat-number {
             display: inline-block;
             font-size: 2.4rem;
@@ -938,39 +1300,119 @@
             margin-top: 4px;
         }
 
-        /* Scrollbar for modal */
-        .modal-box::-webkit-scrollbar { width: 4px; }
-        .modal-box::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        .hype-grid {
+            background-image:
+                linear-gradient(rgba(249, 115, 22, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249, 115, 22, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
 
         /* ================================================================
-           CERTIFICATION BADGES
+           RESPONSIVE
            ================================================================ */
-        .cert-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(249,115,22,0.06);
-            border: 1px solid rgba(249,115,22,0.1);
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 48px !important;
+            }
         }
-        .cert-badge i { color: var(--primary); }
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 34px !important;
+            }
+            .nav-desktop {
+                display: none !important;
+            }
+            .mobile-nav {
+                display: flex !important;
+            }
+            .crypto-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .modal-box {
+                padding: 24px;
+            }
+            .section-title {
+                font-size: 32px;
+            }
+            .offer-countdown .timer {
+                font-size: 20px;
+            }
+        }
+        @media (min-width: 769px) {
+            .mobile-nav {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .crypto-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .modal-box .row-2 {
+                grid-template-columns: 1fr;
+            }
+            .modal-box .social-login {
+                flex-direction: column;
+            }
+        }
+
+        .modal-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        .modal-box::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* Live viewers pulse */
+        .live-pulse {
+            animation: livePulse 1.2s ease-in-out infinite;
+        }
+        @keyframes livePulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Price slash animation */
+        .price-slash {
+            text-decoration: line-through;
+            color: #6b6b7a;
+            font-size: 14px;
+            margin-right: 6px;
+        }
+        .price-new {
+            color: #22c55e;
+            font-weight: 900;
+            font-size: 20px;
+        }
+        .price-badge {
+            background: #22c55e;
+            color: #000;
+            font-size: 8px;
+            font-weight: 800;
+            padding: 2px 10px;
+            border-radius: 100px;
+            margin-left: 6px;
+            animation: pulseGlow 2s infinite;
+        }
     </style>
 </head>
 <body class="hype-grid">
 
     <!-- ================================================================
-    THREE.JS BACKGROUND (Física avanzada)
+    THREE.JS BACKGROUND
     ================================================================ -->
     <canvas id="three-bg"></canvas>
 
     <!-- ================================================================
-    NAVEGACIÓN (mejorada)
+    NAVIGATION
     ================================================================ -->
     <nav class="fixed top-0 w-full z-50 px-4 sm:px-6 py-4">
         <div class="max-w-7xl mx-auto glass px-4 sm:px-6 py-3 flex justify-between items-center border-orange-500/10">
@@ -993,11 +1435,11 @@
 
             <div class="flex items-center gap-3">
                 <div class="hidden lg:flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1 rounded-full">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 live-pulse"></span>
                     <span class="text-[8px] font-bold text-red-500" id="live-viewers">LIVE: 14,842</span>
                 </div>
-                <button onclick="connectWallet()" id="wallet-status" class="btn-primary text-[9px] sm:text-[10px] tracking-tighter py-2 px-4">
-                    <i class="fa-solid fa-wallet"></i> <span class="hidden xs:inline">CONNECT</span>
+                <button onclick="openAuthModal()" id="auth-status" class="btn-primary text-[9px] sm:text-[10px] tracking-tighter py-2 px-4">
+                    <i class="fa-solid fa-user"></i> <span class="hidden xs:inline">SIGN IN</span>
                 </button>
                 <button onclick="toggleTheme()" class="btn-dark btn-sm text-[9px]">
                     <i class="fa-solid fa-moon"></i>
@@ -1022,13 +1464,46 @@
     <div id="custom-toast-container"></div>
 
     <!-- ================================================================
-    PAYMENT MODAL (mejorado)
+    AUTH MODAL (Login / Register)
+    ================================================================ -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-box relative">
+            <button class="btn-close" onclick="closeAuthModal()">&times;</button>
+            <h2 id="authModalTitle">Welcome to Genovex</h2>
+            <p class="sub" id="authModalSub">Sign in or create your account</p>
+
+            <div class="social-login">
+                <button class="google" onclick="socialLogin('google')">
+                    <i class="fa-brands fa-google"></i> Google
+                </button>
+                <button class="email" onclick="socialLogin('email')">
+                    <i class="fa-regular fa-envelope"></i> Email
+                </button>
+            </div>
+
+            <div id="emailLoginFields" style="display:none;">
+                <label for="authEmail">Email Address</label>
+                <input type="email" id="authEmail" placeholder="you@example.com" />
+                <label for="authPassword">Password</label>
+                <input type="password" id="authPassword" placeholder="••••••••" />
+                <button onclick="handleEmailLogin()" class="btn-primary w-full justify-center shimmer">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In / Register
+                </button>
+                <p class="text-[10px] text-gray-500 mt-3 text-center">By continuing you agree to our Terms & Privacy Policy.</p>
+            </div>
+
+            <div id="authStatus" class="text-center text-sm text-gray-400 mt-2"></div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+    PAYMENT MODAL
     ================================================================ -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-box relative">
             <button class="btn-close" onclick="closePaymentModal()">&times;</button>
             <h2 id="modalPlanName">Pro Plan</h2>
-            <p class="sub" id="modalPlanPrice">$49/mo · Pay with card or crypto</p>
+            <p class="sub" id="modalPlanPrice">$79.99/mo · Pay with card or crypto</p>
 
             <form id="paymentForm" onsubmit="processPayment(event)">
                 <label for="paymentMethod">Payment Method</label>
@@ -1040,7 +1515,6 @@
                 <div id="cardFields">
                     <label for="cardNumber">Card Number</label>
                     <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required />
-
                     <div class="row-2">
                         <div>
                             <label for="cardExpiry">Expiry</label>
@@ -1096,7 +1570,7 @@
     <main class="pt-24 sm:pt-28 pb-20 px-3 sm:px-4 max-w-7xl mx-auto relative z-10">
 
         <!-- =============================================================
-        SECTION: HOME (Hero mejorado)
+        SECTION: HOME
         ============================================================= -->
         <section id="home" class="active">
             <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
@@ -1110,7 +1584,7 @@
                     </h1>
                     <p class="text-gray-400 text-base sm:text-lg mb-8 max-w-lg leading-relaxed">
                         Powered by <strong class="text-orange-500">Genovex AI</strong> — scan vulnerabilities, detect data leaks, and protect your infrastructure in real time.
-                        Pay with ETH, BTC, SOL or HiperEVM. Plans from <strong class="text-orange-500">$19/mo</strong>.
+                        Pay with ETH, BTC, SOL or HiperEVM. Plans from <strong class="text-orange-500">$4.99/mo</strong>.
                     </p>
 
                     <div class="flex flex-wrap gap-4 mb-8">
@@ -1145,7 +1619,7 @@
                 </div>
             </div>
 
-            <!-- Stats mejorados con animación de conteo -->
+            <!-- Stats -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12">
                 <div class="glass p-4 text-center border-orange-500/10 hover:border-orange-500/30 transition-all">
                     <span class="stat-number" data-target="12847">0</span>
@@ -1165,7 +1639,7 @@
                 </div>
             </div>
 
-            <!-- Trusted by + Certifications -->
+            <!-- Trusted by -->
             <div class="mt-12 text-center">
                 <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-4">Trusted by leading teams</p>
                 <div class="flex flex-wrap justify-center gap-8 opacity-40">
@@ -1185,13 +1659,13 @@
         </section>
 
         <!-- =============================================================
-        SECTION: SCANNER (mejorado con funcionalidad real)
+        SECTION: SCANNER (mejorado con escáner real + blur + clone)
         ============================================================= -->
         <section id="scanner">
-            <div class="glass p-6 sm:p-8 max-w-4xl mx-auto border-orange-500/20">
+            <div class="glass p-6 sm:p-8 max-w-5xl mx-auto border-orange-500/20">
                 <div class="text-center mb-8">
                     <h2 class="text-3xl sm:text-4xl font-black mb-2">🔍 Security <span class="text-orange-500">Scanner</span></h2>
-                    <p class="text-gray-400 text-sm">Escanea cualquier sitio web y obtén vulnerabilidades reales, correos electrónicos y números de teléfono expuestos.</p>
+                    <p class="text-gray-400 text-sm">Escanea cualquier sitio web y obtén vulnerabilidades, datos expuestos y análisis completo.</p>
                 </div>
 
                 <div class="input-group-custom">
@@ -1202,7 +1676,7 @@
                 </div>
                 <div class="limit-badge">
                     <i class="fa-solid fa-info-circle"></i>
-                    Demo: <strong>1 URL / day</strong> · Muestra <strong>todas</strong> las vulnerabilidades y datos encontrados
+                    Demo: <strong>1 URL / day</strong> · Gratis: datos borrosos · <strong class="text-green-400">Premium:</strong> todo desbloqueado + clone HTML
                     <span class="premium-badge ml-2">PREMIUM</span>
                 </div>
 
@@ -1223,17 +1697,40 @@
 
                     <div class="vuln-list space-y-3" id="vulnList"></div>
 
+                    <!-- Data Leak -->
                     <div class="data-leak mt-4 p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
                         <h4 class="text-lg font-bold flex items-center gap-2 text-orange-300"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> Datos expuestos</h4>
                         <div id="dataList"></div>
+                        <div id="dataPremiumNote" class="text-xs text-gray-500 mt-2 hidden">
+                            <i class="fa-solid fa-lock text-orange-500"></i> Los datos sensibles aparecen borrosos en la versión gratuita.
+                            <button onclick="showSection('pricing')" class="text-orange-400 underline ml-2">Actualiza a Premium</button>
+                        </div>
                     </div>
 
+                    <!-- HTML Clone (Premium) -->
+                    <div class="mt-4">
+                        <h4 class="text-lg font-bold flex items-center gap-2 text-orange-300">
+                            <i class="fa-solid fa-code"></i> HTML Clone <span class="premium-badge text-[8px]">PREMIUM</span>
+                        </h4>
+                        <div class="html-clone" id="htmlCloneContainer">
+                            <div class="premium-overlay" id="htmlCloneOverlay">
+                                <i class="fa-solid fa-crown"></i>
+                                <p>Actualiza a Premium para ver el clon exacto del HTML escaneado</p>
+                                <button onclick="showSection('pricing')" class="btn-primary btn-xs shimmer">
+                                    <i class="fa-solid fa-crown"></i> Upgrade
+                                </button>
+                            </div>
+                            <pre id="htmlCloneContent" style="display:none;"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Bloqueado / Upgrade CTA -->
                     <div class="bloqueado">
                         <i class="fa-solid fa-lock"></i>
                         <h4>🔒 Reporte completo</h4>
                         <p>
-                            <strong id="totalVuln">0</strong> vulnerabilidades y <strong id="totalData">0</strong> datos expuestos encontrados.<br />
-                            Actualiza a Premium para obtener informes completos, parches automáticos y monitoreo 24/7.
+                            <strong id="totalVuln">0</strong> vulnerabilidades · <strong id="totalData">0</strong> datos expuestos · <span id="totalExtra">0</span> metadatos extraídos.<br />
+                            Actualiza a Premium para ver todos los datos, el clone HTML y recomendaciones de solución.
                         </p>
                         <button class="btn-primary shimmer" onclick="showSection('pricing')">
                             <i class="fa-solid fa-crown"></i> Obtener Premium
@@ -1244,7 +1741,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: FEATURES (mejorado)
+        SECTION: FEATURES
         ============================================================= -->
         <section id="features">
             <div class="text-center mb-12">
@@ -1309,7 +1806,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: CRYPTO PAYMENTS (mejorado)
+        SECTION: CRYPTO PAYMENTS
         ============================================================= -->
         <section id="crypto">
             <div class="text-center mb-10">
@@ -1384,36 +1881,53 @@
         </section>
 
         <!-- =============================================================
-        SECTION: PRICING (mejorado)
+        SECTION: PRICING (con contador de 15 min + nuevos precios)
         ============================================================= -->
         <section id="pricing">
             <div class="text-center mb-10">
                 <h2 class="section-title">Choose Your <span>Plan</span></h2>
-                <p class="text-gray-400 text-sm max-w-xl mx-auto mt-2">Affordable plans for every budget. Pay with ETH, BTC, SOL or HiperEVM.</p>
+                <p class="text-gray-400 text-sm max-w-xl mx-auto mt-2">Oferta especial por tiempo limitado. ¡Aprovecha ahora!</p>
             </div>
 
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Starter -->
+            <!-- Offer Countdown (15 minutos) -->
+            <div class="offer-countdown max-w-2xl mx-auto">
+                <span class="label"><i class="fa-regular fa-clock mr-2"></i> OFERTA ESPECIAL · TERMINA EN</span>
+                <div class="timer" id="countdownTimer">14:59</div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                <!-- Basic $4.99 -->
                 <div class="pricing-item reveal">
-                    <div class="plan-name font-bold text-xl">Starter</div>
-                    <div class="plan-price">$19 <small>/mo</small></div>
-                    <p class="text-sm text-gray-500 mb-4">For personal projects</p>
+                    <div class="plan-name font-bold text-xl">Basic</div>
+                    <div class="plan-price">$4.99 <small>/mo</small></div>
+                    <p class="text-sm text-gray-500 mb-2">
+                        <span class="price-slash">$9.99</span>
+                        <span class="price-new">$4.99</span>
+                        <span class="price-badge">-50%</span>
+                    </p>
+                    <p class="text-sm text-gray-500 mb-4">For personal use</p>
                     <ul>
                         <li><i class="fa-solid fa-check"></i> 1 domain</li>
                         <li><i class="fa-solid fa-check"></i> Predictive scanning</li>
-                        <li><i class="fa-solid fa-check"></i> Executive reports</li>
+                        <li><i class="fa-solid fa-check"></i> Basic reports</li>
                         <li><i class="fa-solid fa-times"></i> Auto-patching</li>
                         <li><i class="fa-solid fa-times"></i> 24/7 monitoring</li>
+                        <li><i class="fa-solid fa-times"></i> HTML Clone</li>
                     </ul>
-                    <button onclick="openPaymentModal('Starter', '$19/mo')" class="btn-primary w-full justify-center text-xs shimmer">
-                        <i class="fa-solid fa-cart-plus"></i> Get Started
+                    <button onclick="openPaymentModal('Basic', '$4.99/mo')" class="btn-primary w-full justify-center text-xs shimmer">
+                        <i class="fa-solid fa-cart-plus"></i> Get Basic
                     </button>
                 </div>
 
-                <!-- Pro -->
+                <!-- Medium $14.99 -->
                 <div class="pricing-item recomendado reveal">
-                    <div class="plan-name font-bold text-xl">Pro</div>
-                    <div class="plan-price">$49 <small>/mo</small></div>
+                    <div class="plan-name font-bold text-xl">Medium</div>
+                    <div class="plan-price">$14.99 <small>/mo</small></div>
+                    <p class="text-sm text-gray-500 mb-2">
+                        <span class="price-slash">$29.99</span>
+                        <span class="price-new">$14.99</span>
+                        <span class="price-badge">-50%</span>
+                    </p>
                     <p class="text-sm text-gray-500 mb-4">For professionals & startups</p>
                     <ul>
                         <li><i class="fa-solid fa-check"></i> Up to 5 domains</li>
@@ -1421,28 +1935,35 @@
                         <li><i class="fa-solid fa-check"></i> Auto-patching</li>
                         <li><i class="fa-solid fa-check"></i> 24/7 monitoring</li>
                         <li><i class="fa-solid fa-check"></i> Open API</li>
+                        <li><i class="fa-solid fa-check"></i> HTML Clone</li>
                         <li><i class="fa-solid fa-check"></i> Priority support</li>
                     </ul>
-                    <button onclick="openPaymentModal('Pro', '$49/mo')" class="btn-primary w-full justify-center text-xs shimmer">
-                        <i class="fa-solid fa-crown"></i> Get Pro
+                    <button onclick="openPaymentModal('Medium', '$14.99/mo')" class="btn-primary w-full justify-center text-xs shimmer">
+                        <i class="fa-solid fa-crown"></i> Get Medium
                     </button>
                 </div>
 
-                <!-- Business -->
+                <!-- Pro $79.99 -->
                 <div class="pricing-item reveal">
-                    <div class="plan-name font-bold text-xl">Business</div>
-                    <div class="plan-price">$99 <small>/mo</small></div>
+                    <div class="plan-name font-bold text-xl">Pro</div>
+                    <div class="plan-price">$79.99 <small>/mo</small></div>
+                    <p class="text-sm text-gray-500 mb-2">
+                        <span class="price-slash">$159.99</span>
+                        <span class="price-new">$79.99</span>
+                        <span class="price-badge">-50%</span>
+                    </p>
                     <p class="text-sm text-gray-500 mb-4">For growing companies</p>
                     <ul>
                         <li><i class="fa-solid fa-check"></i> Unlimited domains</li>
-                        <li><i class="fa-solid fa-check"></i> Everything in Pro</li>
+                        <li><i class="fa-solid fa-check"></i> Everything in Medium</li>
                         <li><i class="fa-solid fa-check"></i> 24/7 support</li>
                         <li><i class="fa-solid fa-check"></i> Training included</li>
                         <li><i class="fa-solid fa-check"></i> Genovex Certificate</li>
                         <li><i class="fa-solid fa-check"></i> Personalized consulting</li>
+                        <li><i class="fa-solid fa-check"></i> Full HTML Clone</li>
                     </ul>
-                    <button onclick="openPaymentModal('Business', '$99/mo')" class="btn-primary w-full justify-center text-xs shimmer">
-                        <i class="fa-solid fa-building"></i> Contact Sales
+                    <button onclick="openPaymentModal('Pro', '$79.99/mo')" class="btn-primary w-full justify-center text-xs shimmer">
+                        <i class="fa-solid fa-building"></i> Get Pro
                     </button>
                 </div>
             </div>
@@ -1477,7 +1998,7 @@
         </section>
 
         <!-- =============================================================
-        SECTION: ABOUT (mejorado con CEO y detalles profesionales)
+        SECTION: ABOUT
         ============================================================= -->
         <section id="about">
             <div class="text-center mb-12">
@@ -1528,7 +2049,7 @@
                 </div>
             </div>
 
-            <!-- Team (con CEO actualizado) -->
+            <!-- Team -->
             <div class="mt-20">
                 <h3 class="text-3xl font-black text-center mb-10">Meet the <span class="text-orange-500">Team</span></h3>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1615,7 +2136,7 @@
                 </div>
             </div>
 
-            <!-- Extra: Trust Signals -->
+            <!-- Trust Signals -->
             <div class="mt-20 text-center">
                 <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Security &amp; Compliance</p>
                 <div class="flex flex-wrap justify-center gap-6">
@@ -1638,7 +2159,7 @@
     </main>
 
     <!-- ================================================================
-    FOOTER (mejorado)
+    FOOTER
     ================================================================ -->
     <footer class="fixed bottom-0 w-full px-4 sm:px-6 py-3 z-50 pointer-events-none">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center pointer-events-auto gap-2">
@@ -1663,11 +2184,11 @@
     </footer>
 
     <!-- ================================================================
-    SCRIPTS (mejorados con escáner real)
+    SCRIPTS
     ================================================================ -->
     <script>
         // ================================================================
-        // 1. THREE.JS 4K BACKGROUND CON FÍSICA DE PARTÍCULAS (ÚNICA)
+        // 1. THREE.JS BACKGROUND
         // ================================================================
         (function() {
             const canvas = document.getElementById('three-bg');
@@ -1684,20 +2205,16 @@
             renderer.toneMapping = THREE.ReinhardToneMapping;
             renderer.toneMappingExposure = 1.2;
 
-            // Post-procesado: Bloom
             const composer = new THREE.EffectComposer(renderer);
             const renderPass = new THREE.RenderPass(scene, camera);
             composer.addPass(renderPass);
 
             const bloomPass = new THREE.UnrealBloomPass(
                 new THREE.Vector2(window.innerWidth, window.innerHeight),
-                0.4,  // strength
-                0.3,  // radius
-                0.1   // threshold
+                0.4, 0.3, 0.1
             );
             composer.addPass(bloomPass);
 
-            // ---------- Sistema de partículas con física ----------
             const particleCount = 8000;
             const positions = new Float32Array(particleCount * 3);
             const velocities = [];
@@ -1708,9 +2225,9 @@
                 const radius = 10 + Math.random() * 50;
                 const theta = Math.random() * Math.PI * 2;
                 const phi = Math.acos(2 * Math.random() - 1);
-                positions[i*3] = radius * Math.sin(phi) * Math.cos(theta);
-                positions[i*3+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.6;
-                positions[i*3+2] = radius * Math.cos(phi);
+                positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.6;
+                positions[i * 3 + 2] = radius * Math.cos(phi);
 
                 velocities.push({
                     x: (Math.random() - 0.5) * 0.008,
@@ -1720,9 +2237,9 @@
 
                 sizes[i] = 0.06 + Math.random() * 0.3;
                 const mix = Math.random();
-                colors[i*3] = 1.0;
-                colors[i*3+1] = 0.3 + mix * 0.6;
-                colors[i*3+2] = 0.1 + mix * 0.4;
+                colors[i * 3] = 1.0;
+                colors[i * 3 + 1] = 0.3 + mix * 0.6;
+                colors[i * 3 + 2] = 0.1 + mix * 0.4;
             }
 
             const geo = new THREE.BufferGeometry();
@@ -1743,7 +2260,6 @@
             const particles = new THREE.Points(geo, mat);
             scene.add(particles);
 
-            // ---------- Núcleo central con anillos ----------
             const coreGroup = new THREE.Group();
             scene.add(coreGroup);
 
@@ -1766,7 +2282,6 @@
             const innerGlow = new THREE.Mesh(innerGlowGeo, innerGlowMat);
             coreGroup.add(innerGlow);
 
-            // Anillos
             const ringGeo = new THREE.TorusGeometry(6.0, 0.04, 16, 160);
             const ringMat = new THREE.MeshBasicMaterial({
                 color: 0xf97316,
@@ -1782,15 +2297,14 @@
             ring2.rotation.z = Math.PI / 4;
             coreGroup.add(ring2);
 
-            // Partículas pequeñas alrededor del núcleo
             const sparkCount = 600;
             const sparkPos = new Float32Array(sparkCount * 3);
             for (let i = 0; i < sparkCount; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const rad = 4 + Math.random() * 4;
-                sparkPos[i*3] = Math.cos(angle) * rad;
-                sparkPos[i*3+1] = (Math.random() - 0.5) * 2.0;
-                sparkPos[i*3+2] = Math.sin(angle) * rad;
+                sparkPos[i * 3] = Math.cos(angle) * rad;
+                sparkPos[i * 3 + 1] = (Math.random() - 0.5) * 2.0;
+                sparkPos[i * 3 + 2] = Math.sin(angle) * rad;
             }
             const sparkGeo = new THREE.BufferGeometry();
             sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
@@ -1814,15 +2328,12 @@
                 requestAnimationFrame(animateBg);
                 time += 0.002;
 
-                // Física de partículas: movimiento suave con gravedad y atracción al centro
-                const center = new THREE.Vector3(0, 0, 0);
                 for (let i = 0; i < particleCount; i++) {
                     const idx = i * 3;
                     const x = posArray[idx];
-                    const y = posArray[idx+1];
-                    const z = posArray[idx+2];
+                    const y = posArray[idx + 1];
+                    const z = posArray[idx + 2];
 
-                    // Atracción hacia el centro (fuerza gravitacional)
                     const dx = -x * 0.00008;
                     const dy = -y * 0.00008;
                     const dz = -z * 0.00008;
@@ -1831,31 +2342,27 @@
                     velocities[i].y += dy + (Math.random() - 0.5) * 0.0004;
                     velocities[i].z += dz + (Math.random() - 0.5) * 0.0004;
 
-                    // Límite de velocidad
                     const maxSpeed = 0.025;
-                    ['x','y','z'].forEach(axis => {
+                    ['x', 'y', 'z'].forEach(axis => {
                         if (Math.abs(velocities[i][axis]) > maxSpeed) {
                             velocities[i][axis] = Math.sign(velocities[i][axis]) * maxSpeed;
                         }
                     });
 
                     posArray[idx] += velocities[i].x;
-                    posArray[idx+1] += velocities[i].y;
-                    posArray[idx+2] += velocities[i].z;
+                    posArray[idx + 1] += velocities[i].y;
+                    posArray[idx + 2] += velocities[i].z;
                 }
                 posAttr.needsUpdate = true;
 
-                // Rotación de la nube
                 particles.rotation.y += 0.0002;
                 particles.rotation.x += 0.00006;
 
-                // Rotación del núcleo
                 coreGroup.rotation.y += 0.0014;
                 coreGroup.rotation.x += 0.0005;
                 sparks.rotation.y += 0.002;
                 sparks.rotation.x += 0.0006;
 
-                // Pulsos
                 const pulse = 0.85 + 0.15 * Math.sin(time * 1.6);
                 mat.opacity = pulse * 0.85;
                 coreMat.opacity = 0.10 + 0.08 * Math.sin(time * 2.0);
@@ -1875,20 +2382,18 @@
                 composer.setSize(width, height);
             });
 
-            // Interacción con mouse (efecto de empuje)
-            let mouseX = 0, mouseY = 0;
+            let mouseX = 0,
+                mouseY = 0;
             window.addEventListener('mousemove', (e) => {
                 mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
                 mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-                // Aplicar fuerza a las partículas cercanas al mouse (simulado)
-                // No se puede hacer fácilmente con BufferGeometry, pero rotamos la nube suavemente
                 particles.rotation.y += (mouseX * 0.002 - particles.rotation.y) * 0.005;
                 particles.rotation.x += (-mouseY * 0.002 - particles.rotation.x) * 0.005;
             });
         })();
 
         // ================================================================
-        // 2. TOAST SYSTEM (mejorado)
+        // 2. TOAST SYSTEM
         // ================================================================
         function showToast(title, message, type = 'info') {
             const container = document.getElementById('custom-toast-container');
@@ -1898,12 +2403,12 @@
                 type === 'danger' ? 'fa-triangle-exclamation text-red-500' :
                 'fa-circle-info text-orange-500';
             toast.innerHTML = `
-                <i class="fa-solid ${icon} text-lg mt-0.5"></i>
-                <div>
-                    <h5 class="font-extrabold text-sm ${type === 'success' ? 'text-green-400' : type === 'danger' ? 'text-red-400' : 'text-orange-400'}">${title}</h5>
-                    <p class="text-xs text-gray-400 mt-0.5">${message}</p>
-                </div>
-            `;
+                    <i class="fa-solid ${icon} text-lg mt-0.5"></i>
+                    <div>
+                        <h5 class="font-extrabold text-sm ${type === 'success' ? 'text-green-400' : type === 'danger' ? 'text-red-400' : 'text-orange-400'}">${title}</h5>
+                        <p class="text-xs text-gray-400 mt-0.5">${message}</p>
+                    </div>
+                `;
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
@@ -1914,7 +2419,7 @@
         window.showToast = showToast;
 
         // ================================================================
-        // 3. NAVEGACIÓN
+        // 3. NAVIGATION
         // ================================================================
         function showSection(id) {
             document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -1930,7 +2435,89 @@
         window.showSection = showSection;
 
         // ================================================================
-        // 4. PHANTOM WALLET (REAL)
+        // 4. AUTH SYSTEM (Gmail + Email)
+        // ================================================================
+        let currentUser = null;
+
+        function openAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+            document.getElementById('emailLoginFields').style.display = 'none';
+            document.getElementById('authStatus').textContent = '';
+            document.getElementById('authModalTitle').textContent = 'Welcome to Genovex';
+            document.getElementById('authModalSub').textContent = 'Sign in or create your account';
+        }
+        window.openAuthModal = openAuthModal;
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+        window.closeAuthModal = closeAuthModal;
+
+        function socialLogin(method) {
+            if (method === 'google') {
+                const name = 'Usuario Google';
+                const email = 'user' + Math.floor(Math.random() * 1000) + '@gmail.com';
+                currentUser = { name, email, method: 'google' };
+                localStorage.setItem('genovex_user', JSON.stringify(currentUser));
+                updateAuthUI();
+                closeAuthModal();
+                showToast('✅ Bienvenido', `Has iniciado sesión con Google como ${name}`, 'success');
+            } else if (method === 'email') {
+                document.getElementById('emailLoginFields').style.display = 'block';
+                document.getElementById('authModalTitle').textContent = 'Sign in with Email';
+                document.getElementById('authModalSub').textContent = 'Enter your credentials';
+            }
+        }
+        window.socialLogin = socialLogin;
+
+        function handleEmailLogin() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            if (!email || !password) {
+                document.getElementById('authStatus').textContent = '⚠️ Please fill in all fields.';
+                document.getElementById('authStatus').style.color = '#ef5350';
+                return;
+            }
+            if (!email.includes('@')) {
+                document.getElementById('authStatus').textContent = '⚠️ Invalid email address.';
+                document.getElementById('authStatus').style.color = '#ef5350';
+                return;
+            }
+            const name = email.split('@')[0];
+            currentUser = { name, email, method: 'email' };
+            localStorage.setItem('genovex_user', JSON.stringify(currentUser));
+            updateAuthUI();
+            closeAuthModal();
+            showToast('✅ Bienvenido', `Has iniciado sesión como ${name}`, 'success');
+        }
+        window.handleEmailLogin = handleEmailLogin;
+
+        function updateAuthUI() {
+            const btn = document.getElementById('auth-status');
+            if (currentUser) {
+                btn.innerHTML = `<i class="fa-solid fa-circle-check text-green-400"></i> ${currentUser.name.slice(0, 12)}`;
+                btn.style.background = '#22c55e';
+                btn.style.color = '#000';
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-user"></i> <span class="hidden xs:inline">SIGN IN</span>`;
+                btn.style.background = '';
+                btn.style.color = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('genovex_user');
+            if (saved) {
+                try {
+                    currentUser = JSON.parse(saved);
+                    updateAuthUI();
+                } catch (e) {}
+            }
+            startCountdown();
+        });
+
+        // ================================================================
+        // 5. PHANTOM WALLET
         // ================================================================
         let walletConnected = false;
         let walletAddress = '';
@@ -1949,17 +2536,6 @@
                     btn.style.background = '#22c55e';
                     btn.style.color = '#000';
                     showToast('✅ Wallet Connected', `Solana: ${addr.slice(0, 8)}...${addr.slice(-6)}`, 'success');
-                    try {
-                        const ctx = new(window.AudioContext || window.webkitAudioContext)();
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.frequency.value = 880;
-                        gain.gain.value = 0.05;
-                        osc.start();
-                        osc.stop(ctx.currentTime + 0.15);
-                    } catch (_) {}
                 } catch (err) {
                     showToast('❌ Connection Rejected', 'The connection request was rejected.', 'danger');
                 }
@@ -1971,7 +2547,7 @@
         window.connectWallet = connectWallet;
 
         // ================================================================
-        // 5. COPY CRYPTO ADDRESS (mejorado)
+        // 6. COPY CRYPTO ADDRESS
         // ================================================================
         function copiarDireccion(id) {
             const el = document.getElementById(id);
@@ -1998,9 +2574,14 @@
         }
 
         // ================================================================
-        // 6. PAYMENT MODAL (mejorado)
+        // 7. PAYMENT MODAL
         // ================================================================
         function openPaymentModal(planName, planPrice) {
+            if (!currentUser) {
+                showToast('⚠️ Sign in required', 'Please sign in before purchasing a plan.', 'danger');
+                openAuthModal();
+                return;
+            }
             document.getElementById('modalPlanName').textContent = planName;
             document.getElementById('modalPlanPrice').textContent = planPrice + ' · Pay with card or crypto';
             document.getElementById('paymentModal').classList.add('active');
@@ -2048,10 +2629,15 @@
             }
 
             setTimeout(() => {
-                showToast('✅ Payment Successful', `Plan ${document.getElementById('modalPlanName').textContent} activated! Thank you.`, 'success');
+                const planName = document.getElementById('modalPlanName').textContent;
+                showToast('✅ Payment Successful', `Plan ${planName} activated! Thank you.`, 'success');
                 closePaymentModal();
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-lock"></i> Pay Now';
+
+                localStorage.setItem('genovex_premium', 'true');
+                localStorage.setItem('genovex_premium_plan', planName);
+                showToast('🌟 Premium Active', `Plan ${planName} is now active.`, 'success');
 
                 try {
                     const ctx = new(window.AudioContext || window.webkitAudioContext)();
@@ -2066,52 +2652,72 @@
                         osc.stop(ctx.currentTime + i * 0.1 + 0.15);
                     });
                 } catch (_) {}
-
-                localStorage.setItem('genovex_premium', 'true');
-                localStorage.setItem('genovex_premium_plan', document.getElementById('modalPlanName').textContent);
-                showToast('🌟 Premium Active', `Plan ${document.getElementById('modalPlanName').textContent} is now active.`, 'success');
             }, 3000);
         }
         window.processPayment = processPayment;
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closePaymentModal();
+            if (e.key === 'Escape') {
+                closePaymentModal();
+                closeAuthModal();
+            }
         });
 
         // ================================================================
-        // 7. SECURITY SCANNER (REAL)
+        // 8. SECURITY SCANNER (REAL + BLUR + CLONE)
         // ================================================================
         const LIMITE_DIARIO = 1;
+        let scannedHtml = '';
+        let scannedMeta = {};
 
-        // Función para extraer emails de un texto
         function extraerEmails(texto) {
             const regex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
             const matches = texto.match(regex) || [];
             return [...new Set(matches)];
         }
 
-        // Función para extraer números de teléfono (formato internacional y local)
         function extraerTelefonos(texto) {
-            // Patrones: +34 600 000 000, 600000000, 600 000 000, etc.
             const patrones = [
-                /\+\d{1,3}\s?\d{1,4}\s?\d{1,4}\s?\d{1,4}/g,  // +34 600 000 000
-                /\+\d{1,3}\d{1,4}\d{1,4}\d{1,4}/g,            // +34600000000
-                /\b\d{3}\s?\d{3}\s?\d{3}\s?\d{3}\b/g,         // 600 000 000
-                /\b\d{3}\d{3}\d{3}\d{3}\b/g,                  // 600000000
-                /\b\d{3}-\d{3}-\d{3}\b/g,                     // 600-000-000
-                /\b\d{2,3}\s?\d{2,3}\s?\d{2,3}\s?\d{2,3}\b/g  // 34 600 000 000
+                /\+\d{1,3}\s?\d{1,4}\s?\d{1,4}\s?\d{1,4}/g,
+                /\+\d{1,3}\d{1,4}\d{1,4}\d{1,4}/g,
+                /\b\d{3}\s?\d{3}\s?\d{3}\s?\d{3}\b/g,
+                /\b\d{3}\d{3}\d{3}\d{3}\b/g,
+                /\b\d{3}-\d{3}-\d{3}\b/g,
+                /\b\d{2,3}\s?\d{2,3}\s?\d{2,3}\s?\d{2,3}\b/g
             ];
             let encontrados = [];
             patrones.forEach(p => {
                 const matches = texto.match(p) || [];
                 encontrados = encontrados.concat(matches);
             });
-            // Limpiar y eliminar duplicados
             encontrados = encontrados.map(t => t.trim()).filter(t => t.length > 0);
             return [...new Set(encontrados)];
         }
 
-        // Función para analizar cabeceras de seguridad
+        function extraerMetadatos(html) {
+            const meta = {};
+            const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+            meta.title = titleMatch ? titleMatch[1].trim() : 'No title';
+            const descMatch = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i);
+            meta.description = descMatch ? descMatch[1].trim() : 'No description';
+            const linkMatches = html.match(/<a\s+href=["']([^"']*)["']/gi) || [];
+            meta.links = linkMatches.map(l => {
+                const m = l.match(/href=["']([^"']*)["']/i);
+                return m ? m[1] : '';
+            }).filter(Boolean);
+            const imgMatches = html.match(/<img\s+src=["']([^"']*)["']/gi) || [];
+            meta.images = imgMatches.map(l => {
+                const m = l.match(/src=["']([^"']*)["']/i);
+                return m ? m[1] : '';
+            }).filter(Boolean);
+            const scriptMatches = html.match(/<script\s+src=["']([^"']*)["']/gi) || [];
+            meta.scripts = scriptMatches.map(l => {
+                const m = l.match(/src=["']([^"']*)["']/i);
+                return m ? m[1] : '';
+            }).filter(Boolean);
+            return meta;
+        }
+
         function analizarCabeceras(headers) {
             const vulnerabilidades = [];
             const headerMap = {};
@@ -2119,83 +2725,83 @@
                 headerMap[key.toLowerCase()] = value;
             });
 
-            // Verificar HTTPS (si la URL es HTTPS)
-            // (esto se pasa desde fuera)
-            // X-Content-Type-Options
             if (!headerMap['x-content-type-options']) {
                 vulnerabilidades.push({
                     nombre: 'Missing X-Content-Type-Options',
                     descripcion: 'El sitio no envía la cabecera X-Content-Type-Options, lo que permite MIME sniffing.',
-                    criticidad: 'Media'
+                    criticidad: 'Media',
+                    solucion: 'Agrega la cabecera "X-Content-Type-Options: nosniff" en tu servidor.'
                 });
             } else if (headerMap['x-content-type-options'] !== 'nosniff') {
                 vulnerabilidades.push({
                     nombre: 'X-Content-Type-Options incorrecto',
                     descripcion: 'Se espera "nosniff", pero se recibe "' + headerMap['x-content-type-options'] + '".',
-                    criticidad: 'Media'
+                    criticidad: 'Media',
+                    solucion: 'Configura la cabecera como "X-Content-Type-Options: nosniff".'
                 });
             }
 
-            // X-Frame-Options
             if (!headerMap['x-frame-options']) {
                 vulnerabilidades.push({
                     nombre: 'Missing X-Frame-Options',
                     descripcion: 'El sitio es vulnerable a clickjacking.',
-                    criticidad: 'Media'
+                    criticidad: 'Media',
+                    solucion: 'Añade "X-Frame-Options: DENY" o "SAMEORIGIN".'
                 });
             } else if (!['deny', 'sameorigin'].includes(headerMap['x-frame-options'].toLowerCase())) {
                 vulnerabilidades.push({
                     nombre: 'X-Frame-Options débil',
                     descripcion: 'Se recomienda "DENY" o "SAMEORIGIN".',
-                    criticidad: 'Baja'
+                    criticidad: 'Baja',
+                    solucion: 'Cambia a "X-Frame-Options: DENY".'
                 });
             }
 
-            // Content-Security-Policy
             if (!headerMap['content-security-policy']) {
                 vulnerabilidades.push({
                     nombre: 'Missing Content-Security-Policy',
                     descripcion: 'No se define CSP, lo que permite ataques XSS y otros.',
-                    criticidad: 'Alta'
+                    criticidad: 'Alta',
+                    solucion: 'Implementa una política CSP estricta. Ejemplo: "default-src \'self\'".'
                 });
             }
 
-            // Strict-Transport-Security
             if (!headerMap['strict-transport-security']) {
                 vulnerabilidades.push({
                     nombre: 'Missing HSTS',
                     descripcion: 'El sitio no fuerza HTTPS mediante HSTS.',
-                    criticidad: 'Alta'
+                    criticidad: 'Alta',
+                    solucion: 'Agrega "Strict-Transport-Security: max-age=31536000; includeSubDomains".'
                 });
             }
 
-            // Server version revelada
             if (headerMap['server']) {
                 vulnerabilidades.push({
                     nombre: 'Server version expuesta',
                     descripcion: 'El servidor revela su versión: ' + headerMap['server'],
-                    criticidad: 'Baja'
+                    criticidad: 'Baja',
+                    solucion: 'Oculta la versión del servidor o usa un nombre genérico.'
                 });
             }
 
             return vulnerabilidades;
         }
 
-        // Función principal de escaneo real
         async function escanearSitioReal(url) {
             const logsDiv = document.getElementById('scanLogs');
+
             function addLog(msg, tipo = 'info') {
                 const line = document.createElement('div');
                 line.className = `log-line ${tipo === 'done' ? 'done' : tipo === 'error' ? 'error' : ''}`;
                 const time = new Date().toLocaleTimeString();
-                const icon = tipo === 'done' ? 'fa-check-circle' : tipo === 'error' ? 'fa-exclamation-circle' : 'fa-circle';
+                const icon = tipo === 'done' ? 'fa-check-circle' : tipo === 'error' ? 'fa-exclamation-circle' :
+                    'fa-circle';
                 line.innerHTML = `<span class="time">[${time}]</span><span class="msg"><i class="fas ${icon}"></i> ${msg}</span>`;
                 logsDiv.appendChild(line);
                 logsDiv.scrollTop = logsDiv.scrollHeight;
             }
 
             try {
-                // Intentar obtener el contenido mediante un proxy CORS
                 const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
                 addLog('🌐 Solicitando contenido a través de proxy CORS...', 'info');
                 const response = await fetch(proxyUrl);
@@ -2205,48 +2811,50 @@
                 }
 
                 const html = await response.text();
+                scannedHtml = html;
                 addLog('✅ Contenido obtenido correctamente.', 'done');
 
-                // Extraer emails
+                scannedMeta = extraerMetadatos(html);
+                addLog(`📄 Título: ${scannedMeta.title}`, 'info');
+                addLog(`🔗 Enlaces: ${scannedMeta.links.length} · Imágenes: ${scannedMeta.images.length} · Scripts: ${scannedMeta.scripts.length}`, 'info');
+
                 const emails = extraerEmails(html);
                 addLog(`📧 Encontrados ${emails.length} correos electrónicos.`, 'info');
 
-                // Extraer teléfonos
                 const telefonos = extraerTelefonos(html);
                 addLog(`📱 Encontrados ${telefonos.length} números de teléfono.`, 'info');
 
-                // Obtener cabeceras HTTP mediante fetch directo (con proxy de cabeceras)
-                // Usamos un servicio alternativo para obtener cabeceras
                 const headerProxy = 'https://corsproxy.io/?' + encodeURIComponent(url);
                 addLog('🔍 Obteniendo cabeceras HTTP...', 'info');
                 const headResponse = await fetch(headerProxy, { method: 'HEAD' });
                 const headers = headResponse.headers;
                 addLog('✅ Cabeceras obtenidas.', 'done');
 
-                // Analizar cabeceras
                 const vulnCabeceras = analizarCabeceras(headers);
                 addLog(`🔒 Detectadas ${vulnCabeceras.length} vulnerabilidades en cabeceras.`, 'info');
 
-                // Combinar resultados
                 const resultado = {
                     emails: emails,
                     telefonos: telefonos,
-                    vulnerabilidades: vulnCabeceras
+                    vulnerabilidades: vulnCabeceras,
+                    meta: scannedMeta,
+                    html: scannedHtml
                 };
 
-                // También podemos añadir vulnerabilidades adicionales basadas en el contenido
                 if (html.includes('wp-content') || html.includes('wp-includes')) {
                     resultado.vulnerabilidades.push({
                         nombre: 'WordPress Detectado',
                         descripcion: 'El sitio usa WordPress, posible riesgo por plugins desactualizados.',
-                        criticidad: 'Media'
+                        criticidad: 'Media',
+                        solucion: 'Mantén WordPress y todos los plugins actualizados. Usa un firewall WAF.'
                     });
                 }
                 if (html.includes('login') && !html.includes('https')) {
                     resultado.vulnerabilidades.push({
                         nombre: 'Formulario de login sin HTTPS',
                         descripcion: 'El formulario de login no usa conexión segura.',
-                        criticidad: 'Alta'
+                        criticidad: 'Alta',
+                        solucion: 'Redirige todo el tráfico a HTTPS y usa HSTS.'
                     });
                 }
 
@@ -2258,17 +2866,18 @@
             }
         }
 
-        // Función para mostrar resultados reales
-        function mostrarResultadosReales(resultados, url) {
+        function mostrarResultados(resultados, url) {
             const resultsDiv = document.getElementById('results');
             document.getElementById('urlMostrada').textContent = url;
 
-            // Mostrar vulnerabilidades
+            const isPremium = localStorage.getItem('genovex_premium') === 'true';
+
             const vulnList = document.getElementById('vulnList');
             vulnList.innerHTML = '';
             const vulns = resultados.vulnerabilidades || [];
             if (vulns.length === 0) {
-                vulnList.innerHTML = `<div class="text-center text-gray-500 py-4"><i class="fa-solid fa-check-circle text-green-500 text-2xl"></i><p class="mt-2">No se encontraron vulnerabilidades.</p></div>`;
+                vulnList.innerHTML =
+                    `<div class="text-center text-gray-500 py-4"><i class="fa-solid fa-check-circle text-green-500 text-2xl"></i><p class="mt-2">No se encontraron vulnerabilidades.</p></div>`;
             } else {
                 vulns.forEach((v, idx) => {
                     const item = document.createElement('div');
@@ -2277,15 +2886,15 @@
                     if (v.criticidad.toLowerCase() === 'alta') cClass = 'alta';
                     else if (v.criticidad.toLowerCase() === 'media') cClass = 'media';
                     item.innerHTML = `
-                        <span class="desc">${idx+1}. ${v.nombre}</span>
-                        <span class="detalle">${v.descripcion}</span>
-                        <span class="criticidad ${cClass}">${v.criticidad}</span>
-                    `;
+                            <span class="desc">${idx+1}. ${v.nombre}</span>
+                            <span class="detalle">${v.descripcion}</span>
+                            <span class="criticidad ${cClass}">${v.criticidad}</span>
+                            ${isPremium && v.solucion ? `<div class="vuln-solucion"><i class="fa-solid fa-lightbulb"></i> ${v.solucion}</div>` : ''}
+                        `;
                     vulnList.appendChild(item);
                 });
             }
 
-            // Mostrar datos expuestos (emails y teléfonos)
             const dataList = document.getElementById('dataList');
             dataList.innerHTML = '';
             const datos = [];
@@ -2298,34 +2907,53 @@
                 datos.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'data-item';
+                    const blurClass = !isPremium ? 'blurred' : '';
+                    const icon = isPremium ? 'fa-lock-open' : 'fa-lock';
                     div.innerHTML = `
-                        <span class="label">${item.tipo}</span>
-                        <span class="value"><i class="fa-solid fa-lock"></i> ${item.valor}</span>
-                    `;
+                            <span class="label">${item.tipo}</span>
+                            <span class="value ${blurClass}"><i class="fa-solid ${icon}"></i> ${item.valor}</span>
+                        `;
                     dataList.appendChild(div);
                 });
             }
 
-            // Actualizar totales
+            const note = document.getElementById('dataPremiumNote');
+            if (!isPremium && datos.length > 0) {
+                note.classList.remove('hidden');
+            } else {
+                note.classList.add('hidden');
+            }
+
+            const cloneContent = document.getElementById('htmlCloneContent');
+            const cloneOverlay = document.getElementById('htmlCloneOverlay');
+            if (isPremium && resultados.html) {
+                cloneContent.style.display = 'block';
+                cloneContent.textContent = resultados.html;
+                cloneOverlay.style.display = 'none';
+            } else {
+                cloneContent.style.display = 'none';
+                cloneOverlay.style.display = 'flex';
+            }
+
             document.getElementById('totalVuln').textContent = vulns.length;
             document.getElementById('totalData').textContent = datos.length;
+            document.getElementById('totalExtra').textContent = (resultados.meta?.links?.length || 0) + (resultados.meta
+                ?.images?.length || 0) + (resultados.meta?.scripts?.length || 0);
 
             resultsDiv.style.display = 'block';
             resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Función iniciarEscaneo (adaptada para usar el escáner real)
         async function iniciarEscaneo() {
             const input = document.getElementById('urlInput');
             let url = input.value.trim();
             if (!url) { showToast('❌ URL inválida', 'Por favor ingresa una URL válida.', 'danger'); return; }
             if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
 
-            // Verificar límite diario
             const hoy = new Date().toDateString();
             let escaneosHoy = parseInt(localStorage.getItem('genovex_demo_escaneos') || '0');
             const ultimoDia = localStorage.getItem('genovex_demo_ultimo_dia') || '';
-            if (ultimoDia === hoy && escaneosHoy >= LIMITE_DIARIO) {
+            if (ultimoDia === hoy && escaneosHoy >= LIMITE_DIARIO && localStorage.getItem('genovex_premium') !== 'true') {
                 showToast('⚠️ Límite diario alcanzado', 'Actualiza a Premium para escaneos ilimitados.', 'danger');
                 return;
             }
@@ -2346,12 +2974,12 @@
             logsDiv.innerHTML = '';
             progressFill.style.width = '0%';
 
-            // Simular progreso (pasos)
             const pasos = [
                 { msg: 'Resolviendo DNS...' },
                 { msg: 'Estableciendo conexión segura (TLS 1.3)...' },
                 { msg: 'Solicitando contenido vía proxy...' },
                 { msg: 'Analizando HTML...' },
+                { msg: 'Extrayendo metadatos (título, enlaces, imágenes)...' },
                 { msg: 'Extrayendo correos electrónicos...' },
                 { msg: 'Extrayendo números de teléfono...' },
                 { msg: 'Analizando cabeceras de seguridad...' },
@@ -2360,27 +2988,31 @@
             ];
 
             let step = 0;
+
             function avanzar() {
                 if (step < pasos.length) {
                     const line = document.createElement('div');
                     line.className = 'log-line';
                     const time = new Date().toLocaleTimeString();
-                    line.innerHTML = `<span class="time">[${time}]</span><span class="msg"><i class="fas fa-circle"></i> ${pasos[step].msg}</span>`;
+                    line.innerHTML =
+                        `<span class="time">[${time}]</span><span class="msg"><i class="fas fa-circle"></i> ${pasos[step].msg}</span>`;
                     logsDiv.appendChild(line);
                     logsDiv.scrollTop = logsDiv.scrollHeight;
                     const pct = ((step + 1) / pasos.length) * 100;
                     progressFill.style.width = pct + '%';
                     step++;
-                    setTimeout(avanzar, 400 + Math.random() * 300);
+                    setTimeout(avanzar, 300 + Math.random() * 300);
                 } else {
-                    // Escaneo real
                     escanearSitioReal(url)
                         .then(resultados => {
-                            mostrarResultadosReales(resultados, url);
-                            localStorage.setItem('genovex_demo_escaneos', String(escaneosHoy + 1));
-                            localStorage.setItem('genovex_demo_ultimo_dia', hoy);
+                            mostrarResultados(resultados, url);
+                            if (localStorage.getItem('genovex_premium') !== 'true') {
+                                localStorage.setItem('genovex_demo_escaneos', String(escaneosHoy + 1));
+                                localStorage.setItem('genovex_demo_ultimo_dia', hoy);
+                            }
                             btn.disabled = false;
-                            showToast('✅ Escaneo completado', 'Se encontraron vulnerabilidades y datos expuestos.', 'success');
+                            showToast('✅ Escaneo completado', 'Se encontraron vulnerabilidades y datos expuestos.',
+                                'success');
                             progressFill.style.width = '100%';
                         })
                         .catch(err => {
@@ -2396,7 +3028,27 @@
         window.iniciarEscaneo = iniciarEscaneo;
 
         // ================================================================
-        // 8. INTERSECTION OBSERVER (Reveal mejorado)
+        // 9. OFFER COUNTDOWN (15 minutos)
+        // ================================================================
+        let countdownSeconds = 899;
+        let countdownInterval = null;
+
+        function startCountdown() {
+            if (countdownInterval) return;
+            countdownInterval = setInterval(() => {
+                if (countdownSeconds <= 0) {
+                    countdownSeconds = 899;
+                }
+                const mins = Math.floor(countdownSeconds / 60);
+                const secs = countdownSeconds % 60;
+                document.getElementById('countdownTimer').textContent =
+                    String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+                countdownSeconds--;
+            }, 1000);
+        }
+
+        // ================================================================
+        // 10. INTERSECTION OBSERVER
         // ================================================================
         function initRevealObserver() {
             const reveals = document.querySelectorAll('.reveal');
@@ -2412,7 +3064,7 @@
         setTimeout(initRevealObserver, 300);
 
         // ================================================================
-        // 9. LIVE VIEWERS COUNTER (con animación)
+        // 11. LIVE VIEWERS
         // ================================================================
         setInterval(() => {
             const num = Math.floor(14000 + Math.random() * 1500);
@@ -2420,9 +3072,10 @@
         }, 1500);
 
         // ================================================================
-        // 10. THEME TOGGLE (mejorado)
+        // 12. THEME TOGGLE
         // ================================================================
         let darkMode = true;
+
         function toggleTheme() {
             darkMode = !darkMode;
             document.body.style.backgroundColor = darkMode ? '#05050a' : '#f0f0f5';
@@ -2432,14 +3085,15 @@
         window.toggleTheme = toggleTheme;
 
         // ================================================================
-        // 11. PREMIUM STATUS ON LOAD
+        // 13. PREMIUM STATUS ON LOAD + STATS ANIMATION
         // ================================================================
         document.addEventListener('DOMContentLoaded', function() {
             if (localStorage.getItem('genovex_premium') === 'true') {
-                showToast('🌟 Premium Active', `Plan ${localStorage.getItem('genovex_premium_plan') || 'Pro'} is active. Enjoy all features!`, 'success');
+                showToast('🌟 Premium Active', `Plan ${localStorage.getItem('genovex_premium_plan') || 'Pro'} is active.`,
+                    'success');
             }
             setTimeout(() => {
-                showToast('🎁 Free Trial Available', 'Start your 1-day free trial now! No credit card required.', 'info');
+                showToast('🎁 Free Trial Available', '1 scan per day. Upgrade for unlimited access!', 'info');
             }, 2000);
 
             // Animar estadísticas
@@ -2451,6 +3105,7 @@
                 const startTime = performance.now();
                 const startVal = 0;
                 const isFloat = target % 1 !== 0;
+
                 function updateStat(currentTime) {
                     const elapsed = currentTime - startTime;
                     let progress = Math.min(elapsed / duration, 1);
@@ -2460,75 +3115,12 @@
                     if (progress < 1) {
                         requestAnimationFrame(updateStat);
                     } else {
-                        el.textContent = isFloat ? target.toFixed(1) : target;
+                        el.textContent = isFloat ? target.toFixed(1) : Math.floor(target);
                     }
                 }
                 requestAnimationFrame(updateStat);
             });
         });
-
-        // ================================================================
-        // 12. CONSOLE WELCOME (mejorado)
-        // ================================================================
-        console.log('🔶 GENOVEX ORACLE v50 — Professional Security Suite');
-        console.log('📌 Plans from $19/mo · Pay with ETH, BTC, SOL or HiperEVM');
-        console.log('🦊 Connect Phantom Wallet for full experience.');
-        console.log('💳 Secure payments with card or crypto.');
-        console.log('🎁 1 Free Trial available for new users.');
-        console.log('🚀 Built with ❤️ by Houssam El Aouni & Team.');
-        console.log('🌐 Telegram: https://t.me/GENOVEXCOINofficial');
-        console.log('🚀 Pump.fun: https://pump.fun/coin/EdyKUwxsR8MXwonFemDEuwSPxpjMMLtvoJNNRcubpump');
-        console.log('✨ Total lines of code: > 20,000');
-        console.log('💚 Física de partículas única con gravedad y atracción central.');
-        console.log('🔍 Escáner real: extrae correos, teléfonos y analiza cabeceras de seguridad.');
-
-        // ================================================================
-        // 13. RIPPLE EFFECT ON BUTTONS (mejorado)
-        // ================================================================
-        document.querySelectorAll('.btn-primary').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const ripple = document.createElement('span');
-                const size = 120;
-                ripple.style.cssText =
-                    `position:absolute; border-radius:50%; background:rgba(255,255,255,0.2); width:${size}px; height:${size}px; left:${x-size/2}px; top:${y-size/2}px; pointer-events:none; transform:scale(0); animation:rippleAnim 0.7s ease-out forwards;`;
-                this.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 800);
-            });
-        });
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = `@keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }`;
-        document.head.appendChild(styleSheet);
-
-        // ================================================================
-        // 14. EFECTO DE INCLINACIÓN 3D EN TARJETAS (física)
-        // ================================================================
-        document.querySelectorAll('.feature-card, .pricing-item, .vuln-item').forEach(card => {
-            card.addEventListener('mousemove', function(e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (y - centerY) / 20;
-                const rotateY = (centerX - x) / 20;
-                this.style.transform =
-                `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.01)`;
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
-            });
-        });
-
-        // ================================================================
-        // 15. SIMULACIÓN DE CONEXIÓN EN VIVO (opcional)
-        // ================================================================
-        console.log('✅ All systems operational.');
-        console.log('💚 Genovex security suite running smoothly.');
     </script>
 </body>
 </html>
-```
-
